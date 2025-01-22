@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
@@ -20,32 +21,32 @@ public class RotatingObstacle extends Obstacle{
     double initialangle;
     double initialrotationSpeed;
     double initialY;
+    boolean direction;
 
-    public RotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, double rotationSpeed) {
+    public RotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
         super(textures,x, y, width, length);
         this.angle = initialAngle;
-        this.rotationSpeed = rotationSpeed;
-
+        this.direction = direction;
         //restart
         this.initialangle = this.angle;
         this.initialrotationSpeed = this.rotationSpeed;
         this.initialY = y;
     }
 
-    public RotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, double rotationSpeed) {
+    public RotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
         super(textures,y, percentajeFree, length);
         this.angle = initialAngle;
-        this.rotationSpeed = rotationSpeed;
+        this.direction = direction;
         //restart
         this.initialangle = this.angle;
         this.initialrotationSpeed = this.rotationSpeed;
         this.initialY = y;
     }
 
-    public RotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, double rotationSpeed) {//false = left
+    public RotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
         super(textures,y, percentaje, length, side);
         this.angle = initialAngle;
-        this.rotationSpeed = rotationSpeed;
+        this.direction = direction;
         //restart
         this.initialangle = this.angle;
         this.initialrotationSpeed = this.rotationSpeed;
@@ -53,10 +54,16 @@ public class RotatingObstacle extends Obstacle{
     }
 
     public void update() {
+        this.rotationSpeed = 0.07/(16.66/16.0) * (frameTime/16.0);
         super.update();
         //System.out.println(y);
         if(!collisioned) {
-            angle+=this.rotationSpeed;
+            if(direction) {
+                angle += this.rotationSpeed;
+            }
+            else{
+                angle -= this.rotationSpeed;
+            }
             this.angle = normalizeAngle(this.angle);
         }
     }
@@ -74,12 +81,21 @@ public class RotatingObstacle extends Obstacle{
     @Override
     public void draw(Canvas canvas) {
 
+        /*
         Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(this.context, R.color.white));
 
         canvas.save();
         canvas.rotate((float)(angle*180 /Math.PI),(float)(x+width/2.0),(float)(y+height/2.0));
         canvas.drawRect ((int)(x), (int) (y), (int) (x + width), (int) (y + height), paint);
+        canvas.restore();
+        */
+
+        canvas.save();
+        canvas.rotate((float)(angle*180 /Math.PI),(float)(x+width/2.0),(float)(y+height/2.0));
+        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        textures.marble.setBounds(imageBounds);
+        textures.marble.draw(canvas);
         canvas.restore();
 
         /*

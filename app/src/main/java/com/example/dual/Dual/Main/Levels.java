@@ -45,13 +45,12 @@ public class Levels {
 
     //level1
     public List<Obstacle> loadLevel(int number) {
-        double heightFactor = Resources.getSystem().getDisplayMetrics().heightPixels/1366.0;
         double blockWidth = 40*factor;
         switch(number)
         {
             case 0:
                 obstacles.clear();
-                obstacles.add(new RotatingObstacle(textures,-300,25,40,Math.PI,this.speed));
+                obstacles.add(new RotatingObstacle(textures,-300,25,40,Math.PI,true));
                 //obstacles.add(new Obstacle(0,-300,Main.WIDTH/2-20,40));
                 levels.put(1,obstacles);
                 break;
@@ -88,13 +87,12 @@ public class Levels {
                 levels.put(number,obstacles);
                 break;
             case 4:
-                /*
                 obstacles.clear();
-                obstacles.add(new RotatingObstacle(textures,-500*factor,25,blockWidth,Math.PI,this.speed));
-                obstacles.add(new RotatingObstacle(textures,-1200*factor,25,blockWidth,Math.PI,this.speed));
-                obstacles.add(new RotatingObstacle(textures,-2000*factor,25,blockWidth,Math.PI,-this.speed));
+                double diferencia = Resources.getSystem().getDisplayMetrics().heightPixels-1920;
+                obstacles.add(new RotatingObstacle(textures,-600*factor,25,blockWidth,Math.PI,true));
+                obstacles.add(new RotatingObstacle(textures,-1250*factor,25,blockWidth,Math.PI,true));
+                obstacles.add(new RotatingObstacle(textures,-2150*factor,25,blockWidth,Math.PI,false));
                 levels.put(number,obstacles);
-                 */
                 break;
             case 5:
                 obstacles.clear();
@@ -177,13 +175,11 @@ public class Levels {
                 levels.put(number,obstacles);
                 break;
             case 11:
-                /*
                 obstacles.clear();
-                obstacles.add(new FadingRotatingObstacle(textures,-500*factor,25,blockWidth,Math.PI,this.speed));
-                obstacles.add(new RotatingObstacle(textures,-1200*factor,25,blockWidth,Math.PI,this.speed));
-                obstacles.add(new FadingRotatingObstacle(textures,-1900*factor,25,blockWidth,Math.PI,-this.speed));
+                obstacles.add(new FadingRotatingObstacle(textures,-600*factor,25,blockWidth,Math.PI,true));
+                obstacles.add(new RotatingObstacle(textures,-1250*factor,25,blockWidth,Math.PI,true));
+                obstacles.add(new FadingRotatingObstacle(textures,-2150*factor,25,blockWidth,Math.PI,false));
                 levels.put(number,obstacles);
-                 */
                 break;
             case 12:
                 obstacles.clear();

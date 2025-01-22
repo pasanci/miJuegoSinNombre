@@ -59,6 +59,9 @@ public class RunningState extends GameState{
 
     public void loadLevel() {
         levels.setRotationSpeed(0.07/(16.66/frameTime));
+        if(!this.gsm.getRotatingLevels() && (currentLevel==4 || currentLevel==11)){
+            currentLevel++;
+        }
         obstacles = levels.loadLevel(currentLevel);
     }
 

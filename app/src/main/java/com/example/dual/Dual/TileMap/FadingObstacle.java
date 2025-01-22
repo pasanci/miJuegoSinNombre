@@ -2,6 +2,7 @@ package com.example.dual.Dual.TileMap;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
@@ -9,8 +10,8 @@ import com.example.dual.Dual.Main.Collision;
 import com.example.dual.R;
 
 public class FadingObstacle extends Obstacle{
-    double detectionDistance = 800.0;
-    double fadeDistance = 300.0;
+    double detectionDistance = 1200.0;
+    double fadeDistance = 500.0;
     float alphaValue = 1.0f;
 
     public FadingObstacle(Textures textures, double x, double y, double width, double length) {
@@ -57,10 +58,18 @@ public class FadingObstacle extends Obstacle{
 
     @Override
     public void draw(Canvas canvas) {
+        /*
         Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(this.context, R.color.white));
         paint.setAlpha((int)((alphaValue-0.2)*255));
         canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
         paint.setAlpha(100);
+        */
+
+        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        textures.marble.setBounds(imageBounds);
+        textures.marble.setAlpha((int)((alphaValue)*255));
+        System.out.println((int)((alphaValue)*255));
+        textures.marble.draw(canvas);
     }
 }

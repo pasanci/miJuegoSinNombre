@@ -39,6 +39,7 @@ public class Player{
     //private BufferedImage ice;
     Textures textures;
     //private double lastAngle;
+    private double rotationSpeed = 0.07/(16.66/60);
 
     public Player(Textures textures, int color1, int color2, double angle, double diameter, double ballDiameter) {
         try {
@@ -72,15 +73,15 @@ public class Player{
 
     public void rotateToTarget() {
         double diference = this.angle - this.targetAngle;
-        if(Math.abs(diference)<0.07/(16.66/frameTime)) {
+        if(Math.abs(diference)<this.rotationSpeed) {
             this.angle = this.targetAngle;
             centering = false;
         }
         else if(Math.abs(diference)>Math.PI/2 && Math.abs(diference)>(Math.PI)) {
-            this.angle-=0.07/(16.66/frameTime);
+            this.angle-=this.rotationSpeed;
         }
         else{
-            this.angle+=0.07/(16.66/frameTime);
+            this.angle+=this.rotationSpeed;
         }
         this.angle = normalizeAngle(this.angle);
     }
@@ -115,6 +116,7 @@ public class Player{
     }
 
     public void update() {
+        this.rotationSpeed = 0.07/(16.66/16.0) * (frameTime/16.0);
         if(displayingLevel) {
             this.transparency = (float) (1.0-((System.currentTimeMillis()-levelTime)/fadeTimeInms));
             if(System.currentTimeMillis()-levelTime>fadeTimeInms) {
@@ -133,10 +135,10 @@ public class Player{
         }
         if(!centering && !waitingRestart) {
             if(angleLeft) {
-                this.angle-=0.07/(16.66/frameTime);
+                this.angle-=this.rotationSpeed;
             }
             else if(angleRight) {
-                this.angle+=0.07/(16.66/frameTime);
+                this.angle+=this.rotationSpeed;
             }
         }
     }

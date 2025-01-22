@@ -2,6 +2,7 @@ package com.example.dual.Dual.GameState;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -19,9 +20,11 @@ public class GameStateManager {
     public static final int MENUSTATE = 0;
     public static final int OPTIONSSTATE = 1;
     public static final int RUNNINGSTATE = 2;
-    protected Textures textures = new Textures();
+    protected Textures textures;
+    protected boolean rotatingLevels = true;
 
     public GameStateManager(Context context) {
+        textures = new Textures(context);
         gameStates = new ArrayList<GameState>();
         currentState = MENUSTATE;
         gameStates.add(new MenuState(this, context));
@@ -36,6 +39,14 @@ public class GameStateManager {
 
     public void update() {
         gameStates.get(currentState).update();
+    }
+
+    public boolean getRotatingLevels() {
+        return this.rotatingLevels;
+    }
+
+    public void setRotatingLevels(boolean set) {
+        this.rotatingLevels = set;
     }
 
     public void draw(Canvas canvas) {

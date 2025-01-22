@@ -2,6 +2,7 @@ package com.example.dual.Dual.TileMap;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
@@ -13,16 +14,16 @@ public class FadingRotatingObstacle extends RotatingObstacle{
     double fadeDistance = 300.0;
     float alphaValue = 1.0f;
 
-    public FadingRotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, double rotationSpeed) {
-        super(textures,x, y, width, length, initialAngle , rotationSpeed);
+    public FadingRotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
+        super(textures,x, y, width, length, initialAngle , direction);
     }
 
-    public FadingRotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, double rotationSpeed) {
-        super(textures,y, percentajeFree, length, initialAngle, rotationSpeed);
+    public FadingRotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
+        super(textures,y, percentajeFree, length, initialAngle, direction);
     }
 
-    public FadingRotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, double rotationSpeed) {//false = left
-        super(textures,y, percentaje, length, side, initialAngle, rotationSpeed);
+    public FadingRotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
+        super(textures,y, percentaje, length, side, initialAngle, direction);
     }
 
     public void update() {
@@ -56,6 +57,7 @@ public class FadingRotatingObstacle extends RotatingObstacle{
 
     @Override
     public void draw(Canvas canvas) {
+        /*
         Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(this.context, R.color.white));
         paint.setAlpha((int)((alphaValue-0.2)*255));
@@ -64,5 +66,16 @@ public class FadingRotatingObstacle extends RotatingObstacle{
         canvas.drawRect ((int)(x), (int) (y), (int) (x + width), (int) (y + height), paint);
         canvas.restore();
         paint.setAlpha(100);
+        */
+
+
+        canvas.save();
+        canvas.rotate((float)(angle*180 /Math.PI),(float)(x+width/2.0),(float)(y+height/2.0));
+        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        textures.marble.setBounds(imageBounds);
+        textures.marble.setAlpha((int)((alphaValue-0.2)*255));
+        textures.marble.draw(canvas);
+        textures.marble.setAlpha(255);
+        canvas.restore();
     }
 }

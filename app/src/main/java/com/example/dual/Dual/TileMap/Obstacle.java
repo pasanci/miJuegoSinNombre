@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
@@ -27,9 +28,11 @@ public class Obstacle {
     double playerHeight;
     boolean collisioned = false;
     double collisionY;
+    protected double speed = (7*(1/1))/(16.66/16);
 
     boolean reseting = false;
     double resetSpeed;
+    double resetTime = 1000;
 
     //splash
     protected ArrayList<Collision> collisionList = new ArrayList<Collision>();
@@ -96,8 +99,10 @@ public class Obstacle {
     }
 
     public void update() {
+        this.speed = (6*(1/heightFactor))/(16.66/16.0)* (frameTime/16.0);
+        //this. resetSpeed = 3*this.speed;
         if(!collisioned) {
-            y+=(6*(1/heightFactor))/(16.66/frameTime);
+            y+=this.speed;
             //System.out.println(6/(16.66/frameTime));
         }
     }
@@ -106,6 +111,7 @@ public class Obstacle {
         y-=this.resetSpeed;
         if(y<this.initialy) {
             reseting = false;
+
         }
         return reseting;
     }
@@ -113,7 +119,7 @@ public class Obstacle {
 
     public void reset() {
         this.reseting = true;
-        this.resetSpeed = (this.y - this.initialy) / (6/(16.66/frameTime))/(400/frameTime);
+        this.resetSpeed = (this.y - this.initialy) / (resetTime/frameTime);
     }
 
     public void restart() {
@@ -140,10 +146,14 @@ public class Obstacle {
 
     public void draw(Canvas canvas) {
 
-        Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(this.context, R.color.white));
+        //Paint paint = new Paint();
+        //paint.setColor(ContextCompat.getColor(this.context, R.color.white));
+        //canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
 
-        canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
+        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        textures.marble.setBounds(imageBounds);
+        textures.marble.draw(canvas);
+
 
         /*
         Rectangle r = new Rectangle(0,0,Main.WIDTH,Main.HEIGHT);
