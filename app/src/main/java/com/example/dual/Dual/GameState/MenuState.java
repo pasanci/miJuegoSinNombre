@@ -41,7 +41,7 @@ public class MenuState extends GameState{
         }
         this.optionsrange[optionsrange.length-1] = (startY +optionsrange.length*100-50);
         try {
-            bg = new Background(ContextCompat.getColor(context, R.color.black));
+            bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
         }
         catch(Exception e) {
             e.printStackTrace();

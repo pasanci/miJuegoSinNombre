@@ -9,6 +9,7 @@ import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Collision;
 import com.example.dual.Dual.Main.AffineTransform;
 import com.example.dual.R;
@@ -23,8 +24,8 @@ public class RotatingObstacle extends Obstacle{
     double initialY;
     boolean direction;
 
-    public RotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
-        super(textures,x, y, width, length);
+    public RotatingObstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
+        super(gsm, textures,x, y, width, length);
         this.angle = initialAngle;
         this.direction = direction;
         //restart
@@ -33,8 +34,8 @@ public class RotatingObstacle extends Obstacle{
         this.initialY = y;
     }
 
-    public RotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
-        super(textures,y, percentajeFree, length);
+    public RotatingObstacle(GameStateManager gsm, Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
+        super(gsm, textures,y, percentajeFree, length);
         this.angle = initialAngle;
         this.direction = direction;
         //restart
@@ -43,8 +44,8 @@ public class RotatingObstacle extends Obstacle{
         this.initialY = y;
     }
 
-    public RotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
-        super(textures,y, percentaje, length, side);
+    public RotatingObstacle(GameStateManager gsm, Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
+        super(gsm, textures,y, percentaje, length, side);
         this.angle = initialAngle;
         this.direction = direction;
         //restart
@@ -80,79 +81,16 @@ public class RotatingObstacle extends Obstacle{
 
     @Override
     public void draw(Canvas canvas) {
-
-        /*
-        Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(this.context, R.color.white));
-
         canvas.save();
-        canvas.rotate((float)(angle*180 /Math.PI),(float)(x+width/2.0),(float)(y+height/2.0));
-        canvas.drawRect ((int)(x), (int) (y), (int) (x + width), (int) (y + height), paint);
-        canvas.restore();
-        */
-
-        canvas.save();
-        canvas.rotate((float)(angle*180 /Math.PI),(float)(x+width/2.0),(float)(y+height/2.0));
-        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
+        canvas.rotate((float)(angle*180 /Math.PI),(float)(fx+fWidth/2.0),(float)(fy+fHeight/2.0));
+        Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
         textures.marble.setBounds(imageBounds);
         textures.marble.draw(canvas);
         canvas.restore();
-
-        /*
-        Rectangle r = new Rectangle(0,0,Main.WIDTH,Main.HEIGHT);
-        Rectangle2D rect = new Rectangle2D.Double(-width/2., -height/2., width, height);
-        AffineTransform transform = new AffineTransform();
-        transform.translate(x+width/2.0, y+height/2.0);
-        transform.rotate(angle);
-        Shape rotatedRect = transform.createTransformedShape(rect);
-        g.fill(rotatedRect);
-        g.setClip(rotatedRect);
-        //int[] vertices = getVertices();
-        AffineTransform transform2 = new AffineTransform();
-        transform2.translate(x+width/2.0, y+height/2.0);
-        transform2.rotate(angle);
-        transform2.translate(-width/2.0, -height/2.0 - randomHeight);
-        g.drawImage(this.textures.marble, transform2, null);
-        //g.drawImage(this.textures.marble, (int)x, (int)y, this.textures.marble.getWidth(), this.textures.marble.getHeight(), null);
-        //g.drawImage(this.textures.marble, vertices[0], vertices[1], vertices[2], vertices[3], vertices[4], vertices[5], vertices[6], vertices[7], null);
-*/
-        /*
-        for (Collision collision : collisionList) {
-            Graphics2D g2d = (Graphics2D)g;
-            AffineTransform old = g2d.getTransform();
-
-            g2d.rotate(Math.PI+angle,this.x+width/2, this.y+height-20);
-            g2d.translate((int)(collision.getX() - this.textures.splash.getWidth()/20), (int) ((this.y - this.initialY) + collision.getY() - this.textures.splash.getHeight()/20));
-
-            //g2d.transform(transform2);
-            if(!collision.getColor()) {
-                g.setColor(Color.BLUE);
-                g2d.drawImage(this.textures.splashazul, 0, 0, this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-                //g.drawImage(this.textures.splashazul, (int)(this.x - collision.getX() - this.textures.splash.getWidth()/20), (int) (this.y - collision.getY() - collision.getSplashHeight() - this.textures.splash.getHeight()/10), this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-            }
-            else {
-                g.setColor(Color.RED);
-                g2d.drawImage(this.textures.splashrojo, 0, 0, this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-                //g.drawImage(this.textures.splashrojo, (int)(this.x - collision.getX() - this.textures.splash.getWidth()/20), (int) (this.y - collision.getY() - collision.getSplashHeight() - this.textures.splash.getHeight()/10), this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-            }
-            g2d.setTransform(old);
-            //double ballRadius = 20;
-            //Ellipse2D azul = new Ellipse2D.Float((int)((int)(collision.getX()) - ballRadius), (int)((collision.getY()) - ballRadius), (int)(2.0 * ballRadius), (int)(2 * ballRadius));
-            //g.draw(azul);
-            g.setColor(Color.WHITE);
-
-        }
-        g.setClip(r);
-
-        //double ballRadius = 20;
-        //Ellipse2D azul = new Ellipse2D.Float((int)(this.x+width/2.0 - ballRadius), (int)(this.y+height-20 - ballRadius), (int)(2.0 * ballRadius), (int)(2 * ballRadius));
-        //double ballRadius2 = 10;
-        //Ellipse2D azul2 = new Ellipse2D.Float((int)(this.x+width/2.0 - ballRadius2), (int)(this.y+height-20 - ballRadius2), (int)(2.0 * ballRadius2), (int)(2 * ballRadius2));
-        //g.draw(azul2);
-        //g.draw(azul);
-
-
-         */
     }
 
     @Override
@@ -187,12 +125,12 @@ public class RotatingObstacle extends Obstacle{
     @Override
     public boolean getCollision(double cx, double cy, double radius) {
         AffineTransform transform = new AffineTransform();
-        transform.translate(x+width/2, y+height/2);
+        transform.translate(((x+width/2)/this.gsm.getWidth()*this.gsm.getActualWidth()), ((y+height/2)/this.gsm.getHeight()*this.gsm.getActualHeight()));
         transform.rotate(angle);
-        PointF tip = new PointF((float)-width/2, (float)-height/2);
-        PointF tip2 = new PointF((float)width/2, (float)-height/2);
-        PointF tip3 = new PointF((float)-width/2, (float)height/2);
-        PointF tip4 = new PointF((float)width/2, (float)height/2);
+        PointF tip = new PointF((float)(-width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(-height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
+        PointF tip2 = new PointF((float)(width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(-height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
+        PointF tip3 = new PointF((float)(-width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
+        PointF tip4 = new PointF((float)(width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
         transform.transform(tip, tip);
         transform.transform(tip2, tip2);
         transform.transform(tip3, tip3);

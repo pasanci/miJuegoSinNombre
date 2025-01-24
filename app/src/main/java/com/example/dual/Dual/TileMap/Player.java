@@ -8,6 +8,7 @@ import android.graphics.fonts.Font;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Main;
 import com.example.dual.R;
 
@@ -40,8 +41,10 @@ public class Player{
     Textures textures;
     //private double lastAngle;
     private double rotationSpeed = 0.07/(16.66/60);
+    private GameStateManager gsm;
 
-    public Player(Textures textures, int color1, int color2, double angle, double diameter, double ballDiameter) {
+    public Player(GameStateManager gsm, Textures textures, int color1, int color2, double angle, double diameter, double ballDiameter) {
+        this.gsm = gsm;
         try {
             this.color1 = color1;
             this.color2 = color2;
@@ -65,8 +68,8 @@ public class Player{
         this.level = level+"";
         displayingLevel = true;
         levelTime = System.currentTimeMillis();
-        this.x = x * (Resources.getSystem().getDisplayMetrics().widthPixels/100.0);
-        this.y = y * (Resources.getSystem().getDisplayMetrics().heightPixels/100.0);
+        this.x = x * (this.gsm.getWidth()/100.0);
+        this.y = y * (this.gsm.getHeight()/100.0);
         centering = true;
         this.targetAngle = normalizeAngle(angle);
     }
@@ -91,8 +94,8 @@ public class Player{
     }
 
     public void setPosition(double x, double y) {
-        this.x = x * (Resources.getSystem().getDisplayMetrics().widthPixels/100);
-        this.y = y * (Resources.getSystem().getDisplayMetrics().heightPixels/100);
+        this.x = x * (this.gsm.getWidth()/100);
+        this.y = y * (this.gsm.getHeight()/100);
     }
 
     public void setAngleLeft(boolean value) {
@@ -100,10 +103,10 @@ public class Player{
     }
 
     public double[] getCircles() {
-        double x1 = (diameter * Math.cos(angle) + this.x);
-        double y1 = (diameter * Math.sin(angle) + this.y);
-        double x2 = (diameter * Math.cos(Math.PI+angle) + this.x);
-        double y2 = (diameter * Math.sin(Math.PI+angle) + this.y);
+        double x1 = (this.diameter * Math.cos(angle) + this.x);
+        double y1 = (this.diameter * Math.sin(angle) + this.y);
+        double x2 = (this.diameter * Math.cos(Math.PI+angle) + this.x);
+        double y2 = (this.diameter * Math.sin(Math.PI+angle) + this.y);
         double[] circles = {x1, y1, x2, y2, ballRadius};
         return circles;
     }
@@ -148,6 +151,11 @@ public class Player{
     }
 
     public void draw(Canvas canvas, Context context) {
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        int fd = (int) (this.diameter/this.gsm.getWidth()*this.gsm.getActualWidth());
+        double fBallDiam = ((2*this.ballRadius)/this.gsm.getWidth()*this.gsm.getActualWidth());
+
         if(centering) {
             rotateToTarget();
         }
@@ -155,14 +163,14 @@ public class Player{
         Paint paint = new Paint();
         //canvas.drawColor(ContextCompat.getColor(context, R.color.white));
         paint.setColor(ContextCompat.getColor(context, R.color.white));
-        paint.setTextSize((float)diameter);
+        paint.setTextSize((float)fd);
         paint.setStrokeWidth(3);
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle((int)(this.x), (int)(this.y), (int)diameter, paint);
+        canvas.drawCircle((int)(fx), (int)(fy), (int)fd, paint);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(ContextCompat.getColor(context, R.color.white));
         paint.setAlpha((int)(transparency*250));
-        canvas.drawText(this.level, (int) (this.x-diameter/2/2), (int) (this.y+diameter/2/2), paint);
+        canvas.drawText(this.level, (int) (fx-fd/2/2), (int) (fy+fd/2/2), paint);
         paint.setAlpha(100);
 
         paint.setColor(this.color1);
@@ -171,7 +179,7 @@ public class Player{
         int historicoIteratorAux = historicoIterator;
         for(int i = 0; i<historico.length; i++) {
             paint.setAlpha((int)(0.3*(i/(float)historico.length*250)));
-            canvas.drawCircle((int)((diameter * Math.cos(historico[historicoIteratorAux]) + this.x)), (int)((diameter * Math.sin(historico[historicoIteratorAux]) + this.y)) , (int)(2 * ballRadius*(i/(float)historico.length)),paint);
+            canvas.drawCircle((int)((fd * Math.cos(historico[historicoIteratorAux]) + fx)), (int)((fd * Math.sin(historico[historicoIteratorAux]) + fy)) , (int)(fBallDiam*(i/(float)historico.length)),paint);
             paint.setAlpha(100);
             historicoIteratorAux++;
             if(historicoIteratorAux==historico.length) {
@@ -184,7 +192,7 @@ public class Player{
         historicoIteratorAux = historicoIterator;
         for(int i = 0; i<historico.length; i++) {
             paint.setAlpha((int)(0.3*(i/(float)historico.length*250)));
-            canvas.drawCircle((int)(diameter * Math.cos(Math.PI+historico[historicoIteratorAux]) + this.x), (int)(diameter * Math.sin(Math.PI+historico[historicoIteratorAux]) + this.y), (int)(2 * ballRadius*(i/(float)historico.length)),paint);
+            canvas.drawCircle((int)(fd * Math.cos(Math.PI+historico[historicoIteratorAux]) + fx), (int)(fd * Math.sin(Math.PI+historico[historicoIteratorAux]) + fy), (int)(fBallDiam*(i/(float)historico.length)),paint);
             paint.setAlpha(100);
             historicoIteratorAux++;
             if(historicoIteratorAux==historico.length) {
@@ -232,11 +240,9 @@ public class Player{
 */
         paint.setAlpha(100);
         paint.setColor(this.color1);
-        canvas.drawCircle((int)(diameter * Math.cos(angle) + this.x), (int)(diameter * Math.sin(angle) + this.y), (int)(2 * ballRadius), paint);
+        canvas.drawCircle((int)(fd * Math.cos(angle) + fx), (int)(fd * Math.sin(angle) + fy), (float) fBallDiam, paint);
         paint.setColor(this.color2);
-        canvas.drawCircle((int)(diameter * Math.cos(Math.PI+angle) + this.x), (int)(diameter * Math.sin(Math.PI+angle) + this.y), (int)(2 * ballRadius), paint);
-
-
+        canvas.drawCircle((int)(fd * Math.cos(Math.PI+angle) + fx), (int)(fd * Math.sin(Math.PI+angle) + fy), (float) fBallDiam, paint);
     }
 
     public void setFrameTime(long frameTime) {
@@ -249,5 +255,25 @@ public class Player{
 
     public void setWaitingRestart(boolean status) {
         this.waitingRestart = status;
+    }
+
+    public double getDiameter(){
+        return this.diameter;
+    }
+
+    public double getX(){
+        return this.x;
+    }
+
+    public double getY(){
+        return this.y;
+    }
+
+    public double getBallRadius(){
+        return this.ballRadius;
+    }
+
+    public double getAngle(){
+        return this.angle;
     }
 }

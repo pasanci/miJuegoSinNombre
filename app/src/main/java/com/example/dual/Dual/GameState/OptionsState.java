@@ -40,7 +40,7 @@ public class OptionsState extends GameState{
         }
         this.optionsrange[optionsrange.length-1] = (startY +optionsrange.length*100-50);
         try {
-            bg = new Background(ContextCompat.getColor(context, R.color.black));
+            bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
             init();
         }
         catch(Exception e) {

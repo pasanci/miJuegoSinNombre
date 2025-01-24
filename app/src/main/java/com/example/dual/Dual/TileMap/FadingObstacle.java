@@ -6,6 +6,7 @@ import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Collision;
 import com.example.dual.R;
 
@@ -14,16 +15,16 @@ public class FadingObstacle extends Obstacle{
     double fadeDistance = 500.0;
     float alphaValue = 1.0f;
 
-    public FadingObstacle(Textures textures, double x, double y, double width, double length) {
-        super(textures,x, y, width, length);
+    public FadingObstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length) {
+        super(gsm, textures,x, y, width, length);
     }
 
-    public FadingObstacle(Textures textures, double y, int percentajeFree, double length) {
-        super(textures,y, percentajeFree, length);
+    public FadingObstacle(GameStateManager gsm, Textures textures, double y, int percentajeFree, double length) {
+        super(gsm, textures,y, percentajeFree, length);
     }
 
-    public FadingObstacle(Textures textures, double y, int percentaje, double length, boolean side) {//false = left
-        super(textures,y, percentaje, length, side);
+    public FadingObstacle(GameStateManager gsm, Textures textures, double y, int percentaje, double length, boolean side) {//false = left
+        super(gsm, textures,y, percentaje, length, side);
     }
 
     public void update() {
@@ -65,8 +66,12 @@ public class FadingObstacle extends Obstacle{
         canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
         paint.setAlpha(100);
         */
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
 
-        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
         textures.marble.setBounds(imageBounds);
         textures.marble.setAlpha((int)((alphaValue)*255));
         System.out.println((int)((alphaValue)*255));

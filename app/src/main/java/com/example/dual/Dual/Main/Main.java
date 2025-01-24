@@ -1,12 +1,8 @@
 package com.example.dual.Dual.Main;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,7 +11,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.R;
-import com.example.dual.Dual.Main.GameLoop;
 
 public class Main extends SurfaceView implements SurfaceHolder.Callback {
     private GameLoop gameLoop;
@@ -28,10 +23,6 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
         gsm = new GameStateManager(context);
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
-
-        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
-        //this.SCALE = height/(HEIGHT)*0.99;
 
         this.context = context;
         this.gameLoop = new GameLoop(this, surfaceHolder, context);

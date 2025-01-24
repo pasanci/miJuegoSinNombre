@@ -1,5 +1,6 @@
 package com.example.dual.Dual.TileMap;
 
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.GameLoop;
 import com.example.dual.Dual.Main.Main;
 import com.example.dual.R;
@@ -21,8 +22,10 @@ public class Background {
     private double dy;
 
     private double moveScale;
+    private GameStateManager gsm;
 
-    public Background(int c) {
+    public Background(GameStateManager gsm, int c) {
+        this.gsm = gsm;
         try {
             color = c;
         }
@@ -32,8 +35,8 @@ public class Background {
     }
 
     public void setPosition(double x, double y) {
-        this.x = (x * moveScale) % Resources.getSystem().getDisplayMetrics().widthPixels;
-        this.y = (y * moveScale) % Resources.getSystem().getDisplayMetrics().heightPixels;
+        this.x = (x * moveScale) % this.gsm.getWidth();
+        this.y = (y * moveScale) % this.gsm.getHeight();
     }
 
     public void setVector(double dx, double dy) {

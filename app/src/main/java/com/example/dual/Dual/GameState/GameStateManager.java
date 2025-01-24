@@ -1,8 +1,10 @@
 package com.example.dual.Dual.GameState;
 
+import static java.lang.Double.min;
+
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -22,6 +24,12 @@ public class GameStateManager {
     public static final int RUNNINGSTATE = 2;
     protected Textures textures;
     protected boolean rotatingLevels = true;
+
+    private int width = 1440;
+    private int height = 3200;
+    private int actualWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+    private int actualHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+    private double ratio = min(width/actualHeight,height/actualHeight);
 
     public GameStateManager(Context context) {
         textures = new Textures(context);
@@ -93,4 +101,19 @@ public class GameStateManager {
         this.currentState = 0;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getActualWidth() {
+        return actualWidth;
+    }
+
+    public int getActualHeight() {
+        return actualHeight;
+    }
 }

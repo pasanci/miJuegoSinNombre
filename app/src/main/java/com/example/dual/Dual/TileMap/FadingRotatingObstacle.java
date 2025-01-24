@@ -6,6 +6,7 @@ import android.graphics.Rect;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Collision;
 import com.example.dual.R;
 
@@ -14,16 +15,16 @@ public class FadingRotatingObstacle extends RotatingObstacle{
     double fadeDistance = 300.0;
     float alphaValue = 1.0f;
 
-    public FadingRotatingObstacle(Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
-        super(textures,x, y, width, length, initialAngle , direction);
+    public FadingRotatingObstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length, double initialAngle, boolean direction) {
+        super(gsm, textures,x, y, width, length, initialAngle , direction);
     }
 
-    public FadingRotatingObstacle(Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
-        super(textures,y, percentajeFree, length, initialAngle, direction);
+    public FadingRotatingObstacle(GameStateManager gsm, Textures textures, double y, int percentajeFree, double length, double initialAngle, boolean direction) {
+        super(gsm, textures,y, percentajeFree, length, initialAngle, direction);
     }
 
-    public FadingRotatingObstacle(Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
-        super(textures,y, percentaje, length, side, initialAngle, direction);
+    public FadingRotatingObstacle(GameStateManager gsm, Textures textures, double y, int percentaje, double length, boolean side, double initialAngle, boolean direction) {//false = left
+        super(gsm, textures,y, percentaje, length, side, initialAngle, direction);
     }
 
     public void update() {

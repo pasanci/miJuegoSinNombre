@@ -1,7 +1,8 @@
 package com.example.dual.Dual.TileMap;
 
+import static java.lang.Math.sqrt;
+
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -9,22 +10,34 @@ import android.graphics.Rect;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-import com.example.dual.Dual.Main.Main;
+import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Collision;
 import com.example.dual.R;
 
 public class Obstacle {
+    public double getX() {
+        return x;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getFrameTime() {
+        return frameTime;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
     protected double x=0;
     protected double y=0;
     protected double width=0;
     protected double height=0;
     protected double frameTime;
     Textures textures;
-    int randomHeight;
-    int randomWidth;
-    Random rand = new Random();
     double playerHeight;
     boolean collisioned = false;
     double collisionY;
@@ -45,61 +58,55 @@ public class Obstacle {
     protected double initialframeTime;
 
     protected Context context;
-    double heightFactor = 1366.0/Resources.getSystem().getDisplayMetrics().heightPixels;
+    protected GameStateManager gsm;
 
-    public Obstacle(Textures textures, double x, double y, double width, double length) {
+    public Obstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length) {
+        this.gsm = gsm;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = length;
         this.textures = textures;
-        //randomHeight = rand.nextInt((int) (this.textures.marble.getHeight()-height) + 1);
-        //randomWidth = rand.nextInt((int) (this.textures.marble.getWidth()-width) + 1);
-        //restart
         this.initialx = x;
         this.initialy = y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
     }
 
-    public Obstacle(Textures textures, double y, int percentajeFree, double length) {
+    public Obstacle(GameStateManager gsm, Textures textures, double y, int percentajeFree, double length) {
+        this.gsm = gsm;
         this.y = y;
-        this.width = Resources.getSystem().getDisplayMetrics().widthPixels -((Resources.getSystem().getDisplayMetrics().widthPixels/100.0) * percentajeFree*2);
-        this.x = Resources.getSystem().getDisplayMetrics().widthPixels/2.0 - this.width/2;
+        this.width = this.gsm.getWidth() -((this.gsm.getWidth()/100.0) * percentajeFree*2);
+        this.x = this.gsm.getWidth()/2.0 - this.width/2;
         this.textures = textures;
         this.height = length;
-        //randomHeight = rand.nextInt((int) (this.textures.marble.getHeight()-height) + 1);
-        //randomWidth = rand.nextInt((int) (this.textures.marble.getWidth()-width) + 1);
-        //restart
-        this.initialx = x;
-        this.initialy = y;
+        this.initialx = this.x;
+        this.initialy = this.y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
     }
 
-    public Obstacle(Textures textures, double y, int percentaje, double length, boolean side) {//false = left
+    public Obstacle(GameStateManager gsm, Textures textures, double y, int percentaje, double length, boolean side) {//false = left
+        this.gsm = gsm;
         this.y = y;
         if(!side) {//false = left
             this.x = 0;
-            this.width = (Resources.getSystem().getDisplayMetrics().widthPixels/100.0) * percentaje;
+            this.width = (this.gsm.getWidth()/100.0) * percentaje;
         }
         else {//true = right
-            this.x = (Resources.getSystem().getDisplayMetrics().widthPixels/100.0) * (100-percentaje);
-            this.width = Resources.getSystem().getDisplayMetrics().widthPixels - this.x;
+            this.x = (this.gsm.getWidth()/100.0) * (100-percentaje);
+            this.width = this.gsm.getWidth() - this.x;
         }
         this.height = length;
         this.textures = textures;
-        //randomHeight = rand.nextInt((int) (this.textures.marble.getHeight()-height) + 1);
-        //randomWidth = rand.nextInt((int) (this.textures.marble.getWidth()-width) + 1);
-        //restart
-        this.initialx = x;
-        this.initialy = y;
+        this.initialx = this.x;
+        this.initialy = this.y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
     }
 
     public void update() {
-        this.speed = (6*(1/heightFactor))/(16.66/16.0)* (frameTime/16.0);
+        this.speed = (6*(1/(1366.0/this.gsm.getHeight())))/(16.66/16.0)* (frameTime/16.0);
         //this. resetSpeed = 3*this.speed;
         if(!collisioned) {
             y+=this.speed;
@@ -111,7 +118,6 @@ public class Obstacle {
         y-=this.resetSpeed;
         if(y<this.initialy) {
             reseting = false;
-
         }
         return reseting;
     }
@@ -145,43 +151,18 @@ public class Obstacle {
     }
 
     public void draw(Canvas canvas) {
-
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
         //Paint paint = new Paint();
         //paint.setColor(ContextCompat.getColor(this.context, R.color.white));
         //canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
 
-        Rect imageBounds = new Rect((int)x, (int)y, (int) (x + width), (int) (y + height));
+        Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
         textures.marble.setBounds(imageBounds);
         textures.marble.draw(canvas);
 
-
-        /*
-        Rectangle r = new Rectangle(0,0,Main.WIDTH,Main.HEIGHT);
-        Rectangle obstacle = new Rectangle((int)x, (int)y, (int)width, (int)height);
-        g.setClip(obstacle);
-
-        g.drawImage(this.textures.marble, (int)x - randomWidth, (int)y - randomHeight, this.textures.marble.getWidth(), this.textures.marble.getHeight(), null);
-
-        for (Collision collision : collisionList) {
-            Graphics2D g2d = (Graphics2D)g;
-            AffineTransform old = g2d.getTransform();
-            g2d.translate((int)(this.x - collision.getX() - this.textures.splash.getWidth()/20), (int) (this.y - collision.getY() - collision.getSplashHeight() - this.textures.splash.getHeight()/10));
-            g2d.rotate(Math.toRadians(collision.getSplashAngle()),this.textures.splash.getWidth()/20,this.textures.splash.getHeight()/20);
-            if(collision.getColor()) {
-                g2d.drawImage(this.textures.splashazul, 0, 0, this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-                //g.drawImage(this.textures.splashazul, (int)(this.x - collision.getX() - this.textures.splash.getWidth()/20), (int) (this.y - collision.getY() - collision.getSplashHeight() - this.textures.splash.getHeight()/10), this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-            }
-            else {
-                g2d.drawImage(this.textures.splashrojo, 0, 0, this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-                //g.drawImage(this.textures.splashrojo, (int)(this.x - collision.getX() - this.textures.splash.getWidth()/20), (int) (this.y - collision.getY() - collision.getSplashHeight() - this.textures.splash.getHeight()/10), this.textures.splash.getWidth()/10, this.textures.splash.getHeight()/10, null);
-            }
-            g2d.setTransform(old);
-            //g2d.dispose();
-        }
-        g.setClip(r);
-
-
-         */
     }
 
     public void setFrameTime(long frameTime) {
@@ -189,11 +170,10 @@ public class Obstacle {
     }
 
     public boolean getCollision(double cx, double cy, double radius) {
-        radius = radius;
-        double x1 = x;
-        double y1 = y;
-        double x2 = x + this.width;
-        double y2 = y + this.height;
+        double x1 = (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        double y1 = (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        double x2 = ((this.x+this.width)/this.gsm.getWidth()*this.gsm.getActualWidth());
+        double y2 = ((this.y+this.height)/this.gsm.getHeight()*this.gsm.getActualHeight());
         double closestX = (cx < x1 ? x1 : (cx > x2 ? x2 : cx));
         double closestY = (cy < y1 ? y1 : (cy > y2 ? y2 : cy));
         double dx = closestX - cx;
@@ -224,6 +204,4 @@ public class Obstacle {
     public void setContext(Context context) {
         this.context = context;
     }
-
-
 }
