@@ -53,7 +53,7 @@ public class RunningState extends GameState{
     }
 
     public void init() {
-        currentLevel = 4;
+        currentLevel = 1;
         loadLevel();
         restart();
     }
@@ -128,8 +128,8 @@ public class RunningState extends GameState{
                     restart();
                 }
                 if(collision()) {//DEATH
-                    //choqueState();
-                    this.pause = true;
+                    choqueState();
+                    //this.pause = true;
                 }
             }
         }
