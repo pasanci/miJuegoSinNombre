@@ -3,9 +3,13 @@ package com.example.dual.Dual.TileMap;
 import static java.lang.Math.sqrt;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 
 import androidx.core.content.ContextCompat;
 
@@ -36,8 +40,12 @@ public class Obstacle {
     protected double y=0;
     protected double width=0;
     protected double height=0;
+    protected int fWidth;
+    protected int fHeight;
     protected double frameTime;
     Textures textures;
+    Bitmap tempBitmap;
+    Canvas tempImage;
     double playerHeight;
     boolean collisioned = false;
     double collisionY;
@@ -55,10 +63,13 @@ public class Obstacle {
     protected double initialy=0;
     protected double initialwidth=0;
     protected double initialheight=0;
-    protected double initialframeTime;
 
     protected Context context;
     protected GameStateManager gsm;
+    Paint paintB = new Paint();
+    Paint paintR = new Paint();
+    Paint paintP = new Paint();
+    Paint paint = new Paint();
 
     public Obstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length) {
         this.gsm = gsm;
@@ -67,23 +78,31 @@ public class Obstacle {
         this.width = width;
         this.height = length;
         this.textures = textures;
+        this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
         this.initialx = x;
         this.initialy = y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
+        this.tempImage = new Canvas(tempBitmap);
     }
 
     public Obstacle(GameStateManager gsm, Textures textures, double y, int percentajeFree, double length) {
         this.gsm = gsm;
         this.y = y;
         this.width = this.gsm.getWidth() -((this.gsm.getWidth()/100.0) * percentajeFree*2);
+        this.height = length;
         this.x = this.gsm.getWidth()/2.0 - this.width/2;
         this.textures = textures;
-        this.height = length;
+        this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
         this.initialx = this.x;
         this.initialy = this.y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
+        this.tempImage = new Canvas(tempBitmap);
     }
 
     public Obstacle(GameStateManager gsm, Textures textures, double y, int percentaje, double length, boolean side) {//false = left
@@ -99,10 +118,14 @@ public class Obstacle {
         }
         this.height = length;
         this.textures = textures;
+        this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
+        this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
         this.initialx = this.x;
         this.initialy = this.y;
         this.initialwidth = this.width;
         this.initialheight = this.height;
+        this.tempImage = new Canvas(tempBitmap);
     }
 
     public void update() {
@@ -153,16 +176,37 @@ public class Obstacle {
     public void draw(Canvas canvas) {
         int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
         int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
-        int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
-        int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
         //Paint paint = new Paint();
         //paint.setColor(ContextCompat.getColor(this.context, R.color.white));
         //canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
 
-        Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
-        textures.marble.setBounds(imageBounds);
-        textures.marble.draw(canvas);
+        //Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
+        //textures.marble.setBounds(imageBounds);
+        //textures.marble.draw(canvas);
+        canvas.drawBitmap(tempBitmap,fx,fy,paint);
+        /*
+        for(Collision coll:collisionList){
+            int fcx = (int) (coll.getX()+fx);
+            int fcy = (int) (coll.getY()+fy);
+            if(coll.getColor()) {
+                canvas.drawCircle(fcx, fcy, 10, paintB);
+            }
+            else {
+                canvas.drawCircle(fcx, fcy, 10, paintR);
+            }
+            //canvas.drawCircle(fx, fy, 10, paintP);
+        }
+        */
+    }
 
+    public static Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawBitmap(bmp2, 0, 0, null);
+        bmp1.recycle();
+        bmp2.recycle();
+        return bmOverlay;
     }
 
     public void setFrameTime(long frameTime) {
@@ -186,14 +230,16 @@ public class Obstacle {
     }
 
     public void appendCollision(double x, double y, boolean selector) {
-        Collision col;
-        if(this.y-y>0) {
-            col = new Collision(this.x-x,this.y-y-1.25*height,!selector);
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
+        Collision col = new Collision((((int)x)-fx),((int)y)-fy,!selector);
+        collisionList.add(col);
+        if(selector) {
+            this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintR);
         }
         else {
-            col = new Collision(this.x-x,this.y-y,!selector);
+            this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintB);
         }
-        collisionList.add(col);
     }
 
     public void collisioned() {
@@ -203,5 +249,8 @@ public class Obstacle {
 
     public void setContext(Context context) {
         this.context = context;
+        paintB.setColor(ContextCompat.getColor(context, R.color.cyan));
+        paintR.setColor(ContextCompat.getColor(context, R.color.red));
+        paintP.setColor(ContextCompat.getColor(context, R.color.purple_500));
     }
 }

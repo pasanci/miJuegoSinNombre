@@ -42,6 +42,8 @@ public class Player{
     //private double lastAngle;
     private double rotationSpeed = 0.07/(16.66/60);
     private GameStateManager gsm;
+    Paint paint = new Paint();
+    Paint textPaint = new Paint();
 
     public Player(GameStateManager gsm, Textures textures, int color1, int color2, double angle, double diameter, double ballDiameter) {
         this.gsm = gsm;
@@ -160,18 +162,18 @@ public class Player{
             rotateToTarget();
         }
         this.angle = normalizeAngle(this.angle);
-        Paint paint = new Paint();
         //canvas.drawColor(ContextCompat.getColor(context, R.color.white));
         paint.setColor(ContextCompat.getColor(context, R.color.white));
-        paint.setTextSize((float)fd);
         paint.setStrokeWidth(3);
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle((int)(fx), (int)(fy), (int)fd, paint);
+        canvas.drawCircle(fx, fy, fd, paint);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(ContextCompat.getColor(context, R.color.white));
-        paint.setAlpha((int)(transparency*250));
-        canvas.drawText(this.level, (int) (fx-fd/2/2), (int) (fy+fd/2/2), paint);
-        paint.setAlpha(100);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setColor(ContextCompat.getColor(context, R.color.white));
+        textPaint.setAlpha((int)(transparency*250));
+        textPaint.setTextSize((float)fd);
+        canvas.drawText(this.level, (this.gsm.getActualWidth()/2), fy-((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
+        textPaint.setAlpha(100);
 
         paint.setColor(this.color1);
         //g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

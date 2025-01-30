@@ -56,7 +56,7 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void draw(Canvas canvas) {
-        //super.draw(canvas);
+        super.draw(canvas);
         gsm.draw(canvas);
         //drawUPS(canvas);
         //drawFPS(canvas);

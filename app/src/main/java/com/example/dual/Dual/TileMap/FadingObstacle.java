@@ -3,6 +3,7 @@ package com.example.dual.Dual.TileMap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 
 import androidx.core.content.ContextCompat;
 
@@ -29,7 +30,6 @@ public class FadingObstacle extends Obstacle{
 
     public void update() {
         super.update();
-        //System.out.println(y);
         if(!collisioned) {
             double distance = playerHeight - y;
             if(distance < detectionDistance && distance > fadeDistance) {
@@ -59,22 +59,9 @@ public class FadingObstacle extends Obstacle{
 
     @Override
     public void draw(Canvas canvas) {
-        /*
-        Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(this.context, R.color.white));
-        paint.setAlpha((int)((alphaValue-0.2)*255));
-        canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
-        paint.setAlpha(100);
-        */
-        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
-        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
-        int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
-        int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
-
-        Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
-        textures.marble.setBounds(imageBounds);
-        textures.marble.setAlpha((int)((alphaValue)*255));
-        System.out.println((int)((alphaValue)*255));
-        textures.marble.draw(canvas);
+        int prev = this.paint.getAlpha();
+        this.paint.setAlpha((int)((alphaValue)*255));
+        super.draw(canvas);
+        this.paint.setAlpha(prev);
     }
 }

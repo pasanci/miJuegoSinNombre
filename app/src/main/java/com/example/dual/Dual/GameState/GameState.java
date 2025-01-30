@@ -19,6 +19,7 @@ public abstract class GameState {
     public abstract void setPause();
 
     public abstract void notifyTouchEvent(MotionEvent event);
+
     public abstract void notifyBackPressed();
 
 }

@@ -3,8 +3,8 @@ package com.example.dual.Dual.Main;
 import java.util.Random;
 
 public class Collision {
-    public double x;
-    public double y;
+    public int x;
+    public int y;
     public boolean color; //red false, blue true
 
     //generated
@@ -17,7 +17,8 @@ public class Collision {
     private int highAngle = 359;
     private double splashAngle;
 
-    public Collision(double x, double y, boolean color) { this.x = x;
+    public Collision(int x, int y, boolean color) {
+        this.x = x;
         this.y = y;
         this.color = color;
         this.splashHeight = rand.nextInt(highHeight-lowHeight) + lowHeight;
@@ -34,8 +35,8 @@ public class Collision {
     public double getSplashAngle() { return this.splashAngle; }
     public boolean getColor() { return this.color; }
 
-    void setX(double o) { x = o; }
-    void setY(double o) { y = o; }
+    void setX(int o) { x = o; }
+    void setY(int o) { y = o; }
     void setsplashHeight(double splashHeight) { this.splashHeight = splashHeight; }
     void setColor(boolean color) { this.color = color; }
 

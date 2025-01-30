@@ -50,7 +50,6 @@ public class Background {
     }
 
     public void draw(Canvas canvas) {
-        Paint paint = new Paint();
         canvas.drawColor(color);
         //g.setColor(this.color);
         //g.fillRect (0, 0, (int)x + GameLoop.WIDTH, (int)y + GameLoop.HEIGHT);

@@ -58,15 +58,17 @@ public class RotatingObstacle extends Obstacle{
         this.rotationSpeed = 0.07/(16.66/16.0) * (frameTime/16.0);
         super.update();
         //System.out.println(y);
-        if(!collisioned) {
-            if(direction) {
-                angle += this.rotationSpeed;
-            }
-            else{
-                angle -= this.rotationSpeed;
-            }
-            this.angle = normalizeAngle(this.angle);
+        boolean dir = direction;
+        if(collisioned) {
+            dir = !dir;
         }
+        if(dir) {
+            angle += this.rotationSpeed;
+        }
+        else{
+            angle -= this.rotationSpeed;
+        }
+        this.angle = normalizeAngle(this.angle);
     }
 
     public static double normalizeAngle(double angle) {
@@ -87,10 +89,19 @@ public class RotatingObstacle extends Obstacle{
         int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
         int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
         canvas.rotate((float)(angle*180 /Math.PI),(float)(fx+fWidth/2.0),(float)(fy+fHeight/2.0));
+        /*
         Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
         textures.marble.setBounds(imageBounds);
         textures.marble.draw(canvas);
+        */
+        canvas.drawBitmap(tempBitmap,fx,fy,paint);
         canvas.restore();
+
+        /*
+        for(Collision col:collisionList){
+            canvas.drawCircle(col.x, col.y, 60, paintP);
+        }
+        */
     }
 
     @Override
@@ -196,22 +207,24 @@ public class RotatingObstacle extends Obstacle{
         return (Math.abs(dot) / Math.sqrt(len_sq));
     }
 
-    public void appendCollision(double x, double y, boolean selector) {
+    public void appendCollision(double cx, double cy, boolean selector) {
+        int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
+        int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
 
         AffineTransform transform = new AffineTransform();
-        transform.rotate(initialangle-angle,this.x+width/2, this.y+height-20);
-        PointF tip = new PointF((float)x, (float)y);
+        transform.rotate(initialangle-angle,fx+fWidth/2, fy+fHeight/2);
+        PointF tip = new PointF((float)cx, (float)cy);
         transform.transform(tip, tip);
-        PointF center = new PointF((float)(this.x+width/2), (float)(this.y+height-20));
+        PointF center = new PointF((float)(fx+fWidth/2), (float)(fy+fHeight/2));
         transform.transform(center, center);
 
-        Collision col;
-        if(tip.y-center.y>0) {
-            col = new Collision(tip.x,initialY+(tip.y-center.y-0.25*height),selector);
+        Collision col = new Collision((int) (center.x-tip.x), (int)(center.y-tip.y),!selector);
+        collisionList.add(col);
+        if(selector) {
+            this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintR);
         }
         else {
-            col = new Collision(tip.x,initialY+(tip.y-center.y+1.5*height)/2,selector);
+            this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintB);
         }
-        collisionList.add(col);
     }
 }
