@@ -4,6 +4,7 @@ import static java.lang.Math.sqrt;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -14,6 +15,7 @@ import android.graphics.drawable.LayerDrawable;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.example.dual.Dual.GameState.GameStateManager;
 import com.example.dual.Dual.Main.Collision;
@@ -184,6 +186,7 @@ public class Obstacle {
         //textures.marble.setBounds(imageBounds);
         //textures.marble.draw(canvas);
         canvas.drawBitmap(tempBitmap,fx,fy,paint);
+
         /*
         for(Collision coll:collisionList){
             int fcx = (int) (coll.getX()+fx);
@@ -235,10 +238,14 @@ public class Obstacle {
         Collision col = new Collision((((int)x)-fx),((int)y)-fy,!selector);
         collisionList.add(col);
         if(selector) {
-            this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintR);
+            Bitmap b = textures.splashesR[new Random().nextInt((3)+1)];
+            this.tempImage.drawBitmap(b,((int)x-fx)-b.getWidth()/2,((int)y-fy)-b.getHeight()/2,paintR);
+            //this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintR);
         }
         else {
-            this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintB);
+            Bitmap b = textures.splashesB[new Random().nextInt((3)+1)];
+            this.tempImage.drawBitmap(b,((int)x-fx)-b.getWidth()/2,((int)y-fy)-b.getHeight()/2,paintB);
+            //this.tempImage.drawCircle(((int)x-fx), ((int)y-fy), 60, paintB);
         }
     }
 

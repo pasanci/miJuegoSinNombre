@@ -1,5 +1,6 @@
 package com.example.dual.Dual.TileMap;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -14,6 +15,7 @@ import com.example.dual.Dual.Main.Collision;
 import com.example.dual.Dual.Main.AffineTransform;
 import com.example.dual.R;
 
+import java.util.Random;
 import java.util.Vector;
 
 public class RotatingObstacle extends Obstacle{
@@ -221,10 +223,14 @@ public class RotatingObstacle extends Obstacle{
         Collision col = new Collision((int) (center.x-tip.x), (int)(center.y-tip.y),!selector);
         collisionList.add(col);
         if(selector) {
-            this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintR);
+            //this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintR);
+            Bitmap b = textures.splashesR[new Random().nextInt((3)+1)];
+            this.tempImage.drawBitmap(b,(fWidth/2)+col.x-b.getWidth()/2,fHeight/2+col.y-b.getHeight()/2,paintR);
         }
         else {
-            this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintB);
+            //this.tempImage.drawCircle((fWidth/2)+col.x, fHeight/2+col.y, 60, paintB);
+            Bitmap b = textures.splashesB[new Random().nextInt((3)+1)];
+            this.tempImage.drawBitmap(b,(fWidth/2)+col.x-b.getWidth()/2,fHeight/2+col.y-b.getHeight()/2,paintB);
         }
     }
 }

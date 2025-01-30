@@ -8,14 +8,11 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.view.MotionEventCompat;
 
 import com.example.dual.Dual.TileMap.Background;
 import com.example.dual.Dual.TileMap.Obstacle;
 import com.example.dual.Dual.TileMap.Textures;
 import com.example.dual.Dual.TileMap.Player;
-
-
 import com.example.dual.Dual.Main.Levels;
 import com.example.dual.R;
 
@@ -227,7 +224,7 @@ public class RunningState extends GameState{
         }
     }
 
-/*
+    /*
     public void keyPressed(int k) {
         if(k == KeyEvent.VK_LEFT || k == KeyEvent.VK_A) {
             player.setAngleLeft(true);
@@ -260,7 +257,7 @@ public class RunningState extends GameState{
             player.setAngleRight(false);
         }
     }
- */
+    */
 
     public void setPause() {
         pause = !pause;
@@ -271,7 +268,6 @@ public class RunningState extends GameState{
         int pointerIndex = event.getActionIndex();
         switch (event.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
-                System.out.println("ACTION_DOWN");
                 if (event.getRawX() < this.gsm.getActualWidth() * 0.5) {
                     player.setAngleLeft(true);
                 } else {
@@ -279,24 +275,19 @@ public class RunningState extends GameState{
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                System.out.println("ACTION_UP");
                 player.setAngleLeft(false);
                 player.setAngleRight(false);
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                System.out.println("ACTION_POINTER_DOWN");
                 if (event.getX(pointerIndex) < this.gsm.getActualWidth() * 0.5) {
-                    System.out.println("IZQUIERDA");
                     player.setAngleLeft(true);
                     player.setAngleRight(false);
                 } else {
-                    System.out.println("DERECHA");
                     player.setAngleRight(true);
                     player.setAngleLeft(false);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                System.out.println("ACTION_POINTER_UP");
                 if (event.getX(pointerIndex) < this.gsm.getActualWidth() * 0.5) {
                     player.setAngleRight(true);
                     player.setAngleLeft(false);
