@@ -1,15 +1,24 @@
 package com.example.dual.Dual.Main;
 
-import android.content.res.Resources;
+import static com.example.dual.Dual.Main.ObstacleCreator.HALF;
+import static com.example.dual.Dual.Main.ObstacleCreator.HOLE;
+import static com.example.dual.Dual.Main.ObstacleCreator.SMALLHOLE;
+import static com.example.dual.Dual.Main.ObstacleCreator.CENTER;
+import static com.example.dual.Dual.Main.ObstacleCreator.STEADY;
+import static com.example.dual.Dual.Main.ObstacleCreator.ROTATING;
+import static com.example.dual.Dual.Main.ObstacleCreator.SOLID;
+import static com.example.dual.Dual.Main.ObstacleCreator.FADING;
+import static com.example.dual.Dual.Main.ObstacleCreator.LEFT;
+import static com.example.dual.Dual.Main.ObstacleCreator.RIGHT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.example.dual.Dual.GameState.GameStateManager;
+import com.example.dual.Dual.TileMap.Obstacle;
 import com.example.dual.Dual.TileMap.FadingObstacle;
 import com.example.dual.Dual.TileMap.FadingRotatingObstacle;
-import com.example.dual.Dual.TileMap.Obstacle;
 import com.example.dual.Dual.TileMap.RotatingObstacle;
 import com.example.dual.Dual.TileMap.Textures;
 
@@ -47,6 +56,7 @@ public class Levels {
     //level1
     public List<Obstacle> loadLevel(int number) {
         double blockWidth = 100;
+        ObstacleCreator obsCreator = new ObstacleCreator(this.gsm, this.textures, obstacles);
         switch(number)
         {
             case 0:
@@ -55,158 +65,128 @@ public class Levels {
                 levels.put(1,obstacles);
                 break;
             case 1:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-3300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-5300, 50, blockWidth, true));
-
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 2:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 20, blockWidth, true));
+                obsCreator.reset();
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 3:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 20, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 50, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 20, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-3300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-3300, 20, blockWidth, false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HOLE, STEADY, SOLID, LEFT);
                 levels.put(number,obstacles);
                 break;
             case 4:
-                obstacles.clear();
-                obstacles.add(new RotatingObstacle(this.gsm, textures,-600,25,blockWidth,Math.PI,true));
-                obstacles.add(new RotatingObstacle(this.gsm, textures,-1950,25,blockWidth,Math.PI,true));
-                obstacles.add(new RotatingObstacle(this.gsm, textures,-3200,25,blockWidth,Math.PI,false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, ROTATING, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, ROTATING, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, ROTATING, SOLID, LEFT);
                 levels.put(number,obstacles);
                 break;
             case 5:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 60, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-2300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-3300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 60, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 20, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-5300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-6300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-7300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
+                obsCreator.reset();
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 6:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,0,-300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 60, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 20, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-3300, 40, blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 60, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 20, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-5300, 40, blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-6300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-7300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-8300, 60, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-8300, 20, blockWidth, false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(CENTER, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(CENTER, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, LEFT);
                 levels.put(number,obstacles);
                 break;
 
             case 7:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,0,-300,this.gsm.getWidth()/2-20,blockWidth));
-                //obstacles.add(new Obstacle(this.gsm, textures,0,-300,Main.WIDTH/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-2300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-3300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-4300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-5300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                //obstacles.add(new RotatingObstacle(Main.WIDTH/2+20,-1800,(Main.WIDTH)-(Main.WIDTH/2+20),40,0,0.07));
-
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 8:
-                obstacles.clear();
-                obstacles.add(new Obstacle(this.gsm, textures,0,-300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 60, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-2300, 20, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,0,-3300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 60, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 20, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-5300, 40, blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-6300, 50, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-7300, 50, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-8300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-8300, 20, blockWidth, false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(CENTER, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
                 levels.put(number,obstacles);
                 break;
             case 9:
-                obstacles.clear();
-                obstacles.add(new FadingObstacle(this.gsm, textures,-300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-1300, 60, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-1300, 20, blockWidth, true));
+                obsCreator.reset();
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 10:
-                obstacles.clear();
-                obstacles.add(new FadingObstacle(this.gsm, textures,-300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 60, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-1300, 20, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-2300, 60, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-2300, 20, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-3300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-3300, 20, blockWidth, false));
+                obsCreator.reset();
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
                 levels.put(number,obstacles);
                 break;
             case 11:
-                obstacles.clear();
-                obstacles.add(new FadingRotatingObstacle(this.gsm, textures,-600,25,blockWidth,Math.PI,true));
-                obstacles.add(new FadingRotatingObstacle(this.gsm, textures,-1950,25,blockWidth,Math.PI,true));
-                obstacles.add(new FadingRotatingObstacle(this.gsm, textures,-3200,25,blockWidth,Math.PI,false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, ROTATING, FADING, LEFT);
+                obsCreator.addObstacle(HALF, ROTATING, FADING, LEFT);
+                obsCreator.addObstacle(HALF, ROTATING, FADING, RIGHT);
                 levels.put(number,obstacles);
                 break;
             case 12:
-                obstacles.clear();
-                obstacles.add(new FadingObstacle(this.gsm, textures,-300, 60, blockWidth, true));
-                obstacles.add(new Obstacle(this.gsm, textures,-300, 20, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,0,-2300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,0,-3300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 60, blockWidth, false));
-                obstacles.add(new Obstacle(this.gsm, textures,-4300, 20, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-5300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new Obstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-6300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,this.gsm.getWidth()/2+20,-7300,(this.gsm.getWidth())-(this.gsm.getWidth()/2+20),blockWidth));
-                levels.put(number,obstacles);
+                obsCreator.reset();
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, SOLID, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, RIGHT);levels.put(number,obstacles);
                 break;
             case 13:
-                obstacles.clear();
-                obstacles.add(new FadingObstacle(this.gsm, textures,0,-300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,0,-1300,this.gsm.getWidth()/2-20,blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-2300, 60, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-2300, 20, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-3300, 40, blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-4300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-4300, 20, blockWidth, false));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-5300, 40, blockWidth));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-6300, 50, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-7300, 50, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-8300, 60, blockWidth, true));
-                obstacles.add(new FadingObstacle(this.gsm, textures,-8300, 20, blockWidth, false));
+                obsCreator.reset();
+                obsCreator.addObstacle(HALF, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(CENTER, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
+                obsCreator.addObstacle(CENTER, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(HALF, STEADY, FADING, RIGHT);
+                obsCreator.addObstacle(SMALLHOLE, STEADY, FADING, LEFT);
                 levels.put(number,obstacles);
                 break;
             default:

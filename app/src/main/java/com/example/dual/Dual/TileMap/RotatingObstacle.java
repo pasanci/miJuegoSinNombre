@@ -20,9 +20,7 @@ import java.util.Vector;
 
 public class RotatingObstacle extends Obstacle{
     double angle;
-    double rotationSpeed;
     double initialangle;
-    double initialrotationSpeed;
     double initialY;
     boolean direction;
 
@@ -32,7 +30,6 @@ public class RotatingObstacle extends Obstacle{
         this.direction = direction;
         //restart
         this.initialangle = this.angle;
-        this.initialrotationSpeed = this.rotationSpeed;
         this.initialY = y;
     }
 
@@ -42,7 +39,6 @@ public class RotatingObstacle extends Obstacle{
         this.direction = direction;
         //restart
         this.initialangle = this.angle;
-        this.initialrotationSpeed = this.rotationSpeed;
         this.initialY = y;
     }
 
@@ -52,25 +48,20 @@ public class RotatingObstacle extends Obstacle{
         this.direction = direction;
         //restart
         this.initialangle = this.angle;
-        this.initialrotationSpeed = this.rotationSpeed;
         this.initialY = y;
     }
 
     public void update() {
-        this.rotationSpeed = 0.07/(16.66/16.0) * (frameTime/16.0);
         super.update();
-        //System.out.println(y);
-        boolean dir = direction;
-        if(collisioned) {
-            dir = !dir;
-        }
-        if(dir) {
-            angle += this.rotationSpeed;
+        int dist = (int) ((playerHeight-getY())%1600);
+        if(direction) {
+            this.angle = (360.0/1600)*dist;
         }
         else{
-            angle -= this.rotationSpeed;
+            this.angle = (-360.0/1600)*dist;
         }
-        this.angle = normalizeAngle(this.angle);
+        //this.angle = normalizeAngle(this.angle*Math.PI/180);
+        this.angle = this.angle*Math.PI/180;
     }
 
     public static double normalizeAngle(double angle) {
@@ -80,7 +71,6 @@ public class RotatingObstacle extends Obstacle{
     public void restart() {
         super.restart();
         this.angle = this.initialangle;
-        this.rotationSpeed = this.initialrotationSpeed;
     }
 
     @Override
@@ -91,6 +81,7 @@ public class RotatingObstacle extends Obstacle{
         int fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
         int fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
         canvas.rotate((float)(angle*180 /Math.PI),(float)(fx+fWidth/2.0),(float)(fy+fHeight/2.0));
+        //canvas.rotate((float)this.angle,(float)(fx+fWidth/2.0),(float)(fy+fHeight/2.0));
         /*
         Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
         textures.marble.setBounds(imageBounds);
@@ -139,7 +130,8 @@ public class RotatingObstacle extends Obstacle{
     public boolean getCollision(double cx, double cy, double radius) {
         AffineTransform transform = new AffineTransform();
         transform.translate(((x+width/2)/this.gsm.getWidth()*this.gsm.getActualWidth()), ((y+height/2)/this.gsm.getHeight()*this.gsm.getActualHeight()));
-        transform.rotate(angle);
+        //transform.rotate(this.angle*Math.PI/180);
+        transform.rotate(this.angle);
         PointF tip = new PointF((float)(-width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(-height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
         PointF tip2 = new PointF((float)(width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(-height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());
         PointF tip3 = new PointF((float)(-width/2/this.gsm.getWidth()*this.gsm.getActualWidth()), (float)(height/2)/this.gsm.getHeight()*this.gsm.getActualHeight());

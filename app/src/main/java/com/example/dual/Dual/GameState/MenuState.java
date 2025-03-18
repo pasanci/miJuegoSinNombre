@@ -54,7 +54,9 @@ public class MenuState extends GameState{
 
     private void select() {
         if(currentChoice == 0) {//start
-            gsm.setState(GameStateManager.RUNNINGSTATE);
+            if(gsm.getWidth()>0 && gsm.getActualWidth()>0) {//wait for apk to properly launch
+                gsm.setState(GameStateManager.RUNNINGSTATE);
+            }
         }
         if(currentChoice == 1) {//help
             gsm.setState(GameStateManager.OPTIONSSTATE);
