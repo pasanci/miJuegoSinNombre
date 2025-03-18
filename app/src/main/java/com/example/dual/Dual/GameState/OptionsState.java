@@ -20,8 +20,7 @@ public class OptionsState extends GameState{
     private int currentChoice = 0;
     private double scale;
     private String[] options = {
-            "Scale: " + scale,
-            "Niveles giran"
+            "Scale: " + scale
     };
 
     private Color titleColor;
@@ -74,17 +73,7 @@ public class OptionsState extends GameState{
                 color = ContextCompat.getColor(this.context, R.color.red);
             }
             paint.setColor(color);
-            if(i == 1){
-                if(this.gsm.getRotatingLevels()) {
-                    canvas.drawText(options[1] + "Yes", 145, (startY + 100 +i*100), paint);
-                }
-                else{
-                    canvas.drawText(options[1] + "No", 145, (startY + 100 +i*100), paint);
-                }
-            }
-            else{
-                canvas.drawText(options[i], 145,(startY + 100 +i*100), paint);
-            }
+            canvas.drawText(options[i], 145,(startY + 100 +i*100), paint);
         }
     }
 
@@ -159,16 +148,10 @@ public class OptionsState extends GameState{
                             scale = (double) Math.round(scale * 10d) / 10d;
                             options[0] = "Scale: " + ((float) this.scale);
                         }
-                        if (currentChoice == 1) {
-                            this.gsm.setRotatingLevels(false);
-                        }
                     } else {
                         if (currentChoice == 0) {
                             scale += 0.1;
                             options[0] = "Scale: " + ((float) this.scale);
-                        }
-                        if (currentChoice == 1) {
-                            this.gsm.setRotatingLevels(true);
                         }
                     }
                 }

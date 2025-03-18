@@ -22,8 +22,8 @@ public class GameStateManager {
     public static final int MENUSTATE = 0;
     public static final int OPTIONSSTATE = 1;
     public static final int RUNNINGSTATE = 2;
+    public static final int LEVELSELECTIONSTATE = 3;
     protected Textures textures;
-    protected boolean rotatingLevels = true;
 
     private int width = 1440;
     private int height = 3200;
@@ -38,6 +38,7 @@ public class GameStateManager {
         gameStates.add(new MenuState(this, context));
         gameStates.add(new OptionsState(this, context));
         gameStates.add(new RunningState(this, context));
+        gameStates.add(new LevelSelection(this, context));
     }
 
     public void setState (int state) {
@@ -47,14 +48,6 @@ public class GameStateManager {
 
     public void update() {
         gameStates.get(currentState).update();
-    }
-
-    public boolean getRotatingLevels() {
-        return this.rotatingLevels;
-    }
-
-    public void setRotatingLevels(boolean set) {
-        this.rotatingLevels = set;
     }
 
     public void draw(Canvas canvas) {

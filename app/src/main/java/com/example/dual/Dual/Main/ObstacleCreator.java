@@ -7,23 +7,19 @@ import com.example.dual.Dual.TileMap.RotatingObstacle;
 import com.example.dual.Dual.TileMap.FadingRotatingObstacle;
 import com.example.dual.Dual.TileMap.Textures;
 
-import java.util.ArrayList;
+import static com.example.dual.Dual.Main.SimpleObstacle.HALF;
+import static com.example.dual.Dual.Main.SimpleObstacle.HOLE;
+import static com.example.dual.Dual.Main.SimpleObstacle.SMALLHOLE;
+import static com.example.dual.Dual.Main.SimpleObstacle.CENTER;
+import static com.example.dual.Dual.Main.SimpleObstacle.STEADY;
+import static com.example.dual.Dual.Main.SimpleObstacle.ROTATING;
+import static com.example.dual.Dual.Main.SimpleObstacle.SOLID;
+import static com.example.dual.Dual.Main.SimpleObstacle.FADING;
+import static com.example.dual.Dual.Main.SimpleObstacle.LEFT;
+
 import java.util.List;
 
 public class ObstacleCreator {
-    public static final int HALF = 0;
-    public static final int HOLE = 1;
-    public static final int SMALLHOLE = 2;
-    public static final int CENTER = 3;
-
-    public static final int STEADY = 0;
-    public static final int ROTATING = 1;
-
-    public static final int SOLID = 0;
-    public static final int FADING = 1;
-
-    public static final int LEFT = 0;
-    public static final int RIGHT = 1;
 
     protected GameStateManager gsm;
     private Textures textures;
@@ -84,11 +80,11 @@ public class ObstacleCreator {
         }
         else if(rotating == ROTATING && fading == SOLID){
             obstacles.add(new RotatingObstacle(this.gsm, this.textures,this.y,25,blockWidth,Math.PI,realside));
-            this.y -= 1300;
+            this.y -= 1600;
         }
         else{
             obstacles.add(new FadingRotatingObstacle(this.gsm, this.textures,this.y,25,blockWidth,Math.PI,realside));
-            this.y -= 1300;
+            this.y -= 1600;
         }
     }
 

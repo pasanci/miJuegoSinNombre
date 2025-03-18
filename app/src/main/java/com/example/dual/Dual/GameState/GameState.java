@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
-public abstract class GameState {
+import androidx.appcompat.app.AppCompatActivity;
+
+public abstract class GameState extends AppCompatActivity {
 
     protected GameStateManager gsm;
     protected Context context;
