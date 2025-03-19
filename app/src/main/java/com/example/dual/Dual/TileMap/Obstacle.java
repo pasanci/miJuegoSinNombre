@@ -178,28 +178,7 @@ public class Obstacle {
     public void draw(Canvas canvas) {
         int fx = (int) (this.x/this.gsm.getWidth()*this.gsm.getActualWidth());
         int fy = (int) (this.y/this.gsm.getHeight()*this.gsm.getActualHeight());
-        //Paint paint = new Paint();
-        //paint.setColor(ContextCompat.getColor(this.context, R.color.white));
-        //canvas.drawRect ((int)x, (int)y, (int) (x + width), (int) (y + height), paint);
-
-        //Rect imageBounds = new Rect(fx, fy, (fx + fWidth), (fy + fHeight));
-        //textures.marble.setBounds(imageBounds);
-        //textures.marble.draw(canvas);
         canvas.drawBitmap(tempBitmap,fx,fy,paint);
-
-        /*
-        for(Collision coll:collisionList){
-            int fcx = (int) (coll.getX()+fx);
-            int fcy = (int) (coll.getY()+fy);
-            if(coll.getColor()) {
-                canvas.drawCircle(fcx, fcy, 10, paintB);
-            }
-            else {
-                canvas.drawCircle(fcx, fcy, 10, paintR);
-            }
-            //canvas.drawCircle(fx, fy, 10, paintP);
-        }
-        */
     }
 
     public static Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {

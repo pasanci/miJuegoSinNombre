@@ -24,10 +24,15 @@ import com.example.dual.Dual.TileMap.Textures;
 public class Levels {
 
     private HashMap<Integer, List<Obstacle>> levels = new HashMap<Integer, List<Obstacle>>();
-    List<Obstacle> obstacles = new ArrayList<Obstacle>();
-    Textures textures;
+    private List<Obstacle> obstacles = new ArrayList<Obstacle>();
+    private Textures textures;
     private GameStateManager gsm;
-    List<List<SimpleObstacle>> levelsList;
+
+    private List<List<SimpleObstacle>> levelsList;
+
+    public int getLevelsNumber() {
+        return levelsList.size();
+    }
 
     public Levels(GameStateManager gsm, Textures textures) {
         this.gsm = gsm;

@@ -24,9 +24,7 @@ public class RunningState extends GameState{
     private Background bg;
     private Player player;
     Textures textures;
-    private Levels levels;
     private List<Obstacle> obstacles = new ArrayList<Obstacle>();
-    private int currentLevel;
     private boolean levelCompleted = false;
     private long frameTime = (long) 16.0;
     private long choqueTime = System.nanoTime();
@@ -38,7 +36,6 @@ public class RunningState extends GameState{
         this.gsm = gsm;
         this.context = context;
         this.textures = this.gsm.textures;
-        this.levels = new Levels(this.gsm, this.textures);
         try {
             bg = new Background(this.gsm, ContextCompat.getColor(context, R.color.black));
             player = new Player(this.gsm, this.textures, ContextCompat.getColor(context, R.color.cyan), ContextCompat.getColor(context, R.color.red), Math.PI, 300, 50);
@@ -50,20 +47,19 @@ public class RunningState extends GameState{
     }
 
     public void init() {
-        currentLevel = 1;
         loadLevel();
         restart();
     }
 
     public void loadLevel() {
         this.pause = false;
-        obstacles = levels.loadLevel(currentLevel);
+        obstacles = this.gsm.getLevels().loadLevel(gsm.getCurrentLevel());
     }
 
     public void restart() {
-        player.setPosition(50,80,Math.PI,currentLevel);
+        player.setPosition(50,80,Math.PI,gsm.getCurrentLevel());
         player.setWaitingRestart(false);
-        obstacles = levels.restartLevel();
+        obstacles = this.gsm.getLevels().restartLevel();
         for (Obstacle obstacle : obstacles) {
             obstacle.setContext(this.context);
         }
@@ -76,9 +72,9 @@ public class RunningState extends GameState{
     }
 
     public void reset() {
-        player.setPosition(50,80,Math.PI,currentLevel);
+        player.setPosition(50,80,Math.PI,gsm.getCurrentLevel());
         player.setWaitingRestart(true);
-        obstacles = levels.resetLevel();
+        obstacles = this.gsm.getLevels().resetLevel();
         if(obstacles.size()==0) {
             levelCompleted = true;
         }
@@ -118,7 +114,8 @@ public class RunningState extends GameState{
                 }
                 if(obstacles.size()>0 && min(obsY)>this.gsm.getHeight()+player.getDiameter()) {
                     levelCompleted = true;
-                    currentLevel++;
+                    //currentLevel++;
+                    gsm.setCurrentLevel(gsm.getCurrentLevel()+1);
                     loadLevel();
                     restart();
                 }

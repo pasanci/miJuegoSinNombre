@@ -3,15 +3,18 @@ package com.example.dual.Dual.GameState;
 import static java.lang.Double.min;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
+import com.example.dual.Dual.Main.Levels;
 import com.example.dual.Dual.TileMap.Textures;
 
 public class GameStateManager {
+    public static final String SAVEGAMESTR = "TestSavedLevel";
 
     private ArrayList<GameState> gameStates;
     private int currentState;
@@ -31,8 +34,38 @@ public class GameStateManager {
     private int actualHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
     private double ratio = min(width/actualHeight,height/actualHeight);
 
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    private Levels levels;
+    private int currentLevel;
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+        if(currentLevel>sharedPref.getInt(SAVEGAMESTR, 1)) {
+            editor.putInt(SAVEGAMESTR, currentLevel);
+            editor.apply();
+        }
+    }
+
+    public Levels getLevels() {
+        return levels;
+    }
+
+    public void setLevels(Levels levels) {
+        this.levels = levels;
+    }
+
     public GameStateManager(Context context) {
+        this.context = context;
+        sharedPref = this.context.getSharedPreferences(SAVEGAMESTR, Context.MODE_PRIVATE);
+        this.currentLevel = sharedPref.getInt(SAVEGAMESTR, 1);
+        editor = sharedPref.edit();
         textures = new Textures(context);
+        this.levels = new Levels(this, this.textures);
         gameStates = new ArrayList<GameState>();
         currentState = MENUSTATE;
         gameStates.add(new MenuState(this, context));
