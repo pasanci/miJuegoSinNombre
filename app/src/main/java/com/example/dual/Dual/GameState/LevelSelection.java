@@ -1,10 +1,11 @@
 package com.example.dual.Dual.GameState;
 
+import static com.example.dual.Dual.GameState.GameStateManager.SAVEGAMESTR;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Pair;
 import android.view.MotionEvent;
@@ -13,10 +14,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.dual.Dual.TileMap.Background;
 import com.example.dual.R;
-import static com.example.dual.Dual.GameState.GameStateManager.SAVEGAMESTR;
 
 import java.util.Random;
-
 public class LevelSelection extends GameState {
 
     private Background bg;
@@ -33,18 +32,21 @@ public class LevelSelection extends GameState {
     private int maxLevel;
     private SharedPreferences sharedPref;
     private Paint paint;
+    private Paint paintSplash;
     private Paint paintB;
     private Paint paintR;
     private Bitmap tempBitmap;
     private Canvas tempImage;
     private Pair<Integer,Integer> clickPos;
     private Bitmap splash;
+    private Random random;
+    private long  transitionTime;
 
     LevelSelection(GameStateManager gsm, Context context){
         this.gsm = gsm;
         this.context = context;
         try {
-            bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
+            this.bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -65,14 +67,17 @@ public class LevelSelection extends GameState {
         this.maxDesp = section*num;
         this.maxDesp = this.maxDesp-this.gsm.getActualHeight();
         this.section = (this.width/3);
-        sharedPref = this.context.getSharedPreferences(SAVEGAMESTR, Context.MODE_PRIVATE);
+        this.sharedPref = this.context.getSharedPreferences(SAVEGAMESTR, Context.MODE_PRIVATE);
         this.paint = new Paint();
-        paintB = new Paint();
-        paintR = new Paint();
+        this.paintB = new Paint();
+        this.paintR = new Paint();
+        this.random = new Random();
+        init();
     }
 
     @Override
     public void init() {
+        this.transitionTime = -1;
         this.desplazamiento = 0;
         this.validDesplazamiento = false;
         this.validClick = false;
@@ -87,6 +92,9 @@ public class LevelSelection extends GameState {
     @Override
     public void update() {
         bg.update();
+        if(this.transitionTime>0 && this.transitionTime<System.currentTimeMillis()){
+            gsm.setState(GameStateManager.RUNNINGSTATE);
+        }
     }
 
     @Override
@@ -111,10 +119,13 @@ public class LevelSelection extends GameState {
             }
             if(clickPos!=null) {
                 //this.tempImage.drawBitmap(b,((int)dx)-b.getWidth()/2,((int)dy)-b.getHeight()/2,paintB);
-                canvas.drawBitmap(splash, clickPos.first-splash.getWidth()/2, clickPos.second-splash.getHeight()/2, paintB);
+                canvas.drawBitmap(splash, clickPos.first - splash.getWidth() / 2, clickPos.second - splash.getHeight() / 2, paintSplash);
             }
         }
         this.paint.setAlpha(prev);
+        if(this.transitionTime>0){
+            System.out.println("draw");
+        }
     }
 
     @Override
@@ -146,11 +157,19 @@ public class LevelSelection extends GameState {
                     int y = (int) ((event.getRawY() + this.desplazamiento) / this.section);
                     int n = ((y * 3) + (x + 1));
                     if(n<=this.maxLevel) {
+                        this.transitionTime = System.currentTimeMillis()+1000;
                         gsm.setCurrentLevel(n);
-                        gsm.setState(GameStateManager.RUNNINGSTATE);
+                        //gsm.setState(GameStateManager.RUNNINGSTATE);
                     }
                     clickPos = clickPos.create((int) event.getRawX(),(int) event.getRawY());
-                    splash = gsm.textures.splashesB[new Random().nextInt((3)+1)];
+                    if(random.nextBoolean()) {
+                        paintSplash = paintR;
+                        splash = gsm.textures.splashesR[new Random().nextInt((3)+1)];
+                    }
+                    else{
+                        paintSplash = paintB;
+                        splash = gsm.textures.splashesB[new Random().nextInt((3)+1)];
+                    }
                 }
                 this.validDesplazamiento = false;
                 this.validClick = true;
