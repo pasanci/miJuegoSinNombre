@@ -2,9 +2,12 @@ package com.example.dual.Dual.GameState;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.graphics.fonts.Font;
 import android.view.MotionEvent;
 
@@ -16,25 +19,62 @@ import com.example.dual.R;
 public class MenuState extends GameState{
 
     private Background bg;
+    private Bitmap tempBitmap;
+    private int section;
 
     private int currentChoice = 0;
-    private String[] options = {
-            "Start",
-            "Options",
-            "Quit"
-    };
+    private class Option{
+        public static final int START = 0;
+        public static final int OPTIONS = 1;
+        public static final int QUIT = 2;
+        public VectorDrawable texture;
+        public String name;
+        public int option;
+        public int left, top, right, bottom;
+        public Option(int constant){
+            if(constant == START) {
+                this.option = START;
+                this.name = "Start";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.play_vector);
+            }
+            else if(constant == OPTIONS) {
+                this.option = OPTIONS;
+                this.name = "Options";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.settings_vector);
+            }
+            else if(constant == QUIT) {
+                this.option = QUIT;
+                this.name = "Quit";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.close_vector);
+            }
+        }
+        public Option(int constant,int left,int top,int right,int bottom){
+            this(constant);
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
+        }
+    }
 
+    private Option[] options;
 
     float [] optionsrange;
-    float startY = 280;
+    float startY = 80;
 
     private Color titleColor;
     private Font titleFont;
     private Font font;
+    Paint textPaint = new Paint();
 
     public MenuState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
         this.context = context;
+        this.options = new Option[]{
+                new Option(Option.START),
+                new Option(Option.OPTIONS),
+                new Option(Option.QUIT)
+        };
         this.optionsrange = new float [options.length + 1];
         for(int i=0; i<options.length; i++) {
             this.optionsrange[i] = (startY +i*100+50);
@@ -46,6 +86,15 @@ public class MenuState extends GameState{
         catch(Exception e) {
             e.printStackTrace();
         }
+        this.section = (this.gsm.getActualWidth()/2);
+        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
+
+        textPaint.setTextSize(50);
+        int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
+        for(int i=0; i<options.length; i++) {
+            options[i].texture.setBounds((section/2)+(section/8), currentY+(section/8), (section/2)+(section)-(section/8), currentY+section-(section/8));
+            currentY += section;
+        }
     }
     public void init() {}
     public void update() {
@@ -53,28 +102,27 @@ public class MenuState extends GameState{
     }
 
     private void select() {
-        if(currentChoice == 0) {//start
+        if(currentChoice == Option.START) {//start
             if(gsm.getWidth()>0 && gsm.getActualWidth()>0) {//wait for apk to properly launch
                 //gsm.setState(GameStateManager.RUNNINGSTATE);
                 gsm.setState(GameStateManager.LEVELSELECTIONSTATE);
             }
         }
-        if(currentChoice == 1) {//help
+        if(currentChoice == Option.OPTIONS) {//help
             gsm.setState(GameStateManager.OPTIONSSTATE);
         }
-        if(currentChoice == 2) {//quit
+        if(currentChoice == Option.QUIT) {//quit
             System.exit(0);
         }
     }
 
     public void draw(Canvas canvas) {
+        int currentY = (int) startY;
         bg.draw(canvas);
-        Paint paint = new Paint();
         int color = ContextCompat.getColor(this.context, R.color.magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("El jueguito", 80, startY, paint);
-
+        textPaint.setColor(color);
+        canvas.drawText("El jueguito", 80, startY, textPaint);
+        currentY = (int) (currentY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
             if(i == currentChoice) {
                 color = ContextCompat.getColor(this.context, R.color.white);
@@ -82,8 +130,9 @@ public class MenuState extends GameState{
             else {
                 color = ContextCompat.getColor(this.context, R.color.red);
             }
-            paint.setColor(color);
-            canvas.drawText(options[i], 145,(startY + 100 +i*100), paint);
+            canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
+            options[i].texture.draw(canvas);
+            currentY += section;
         }
     }
 
@@ -119,6 +168,14 @@ public class MenuState extends GameState{
     public void notifyTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                for(Option opt:options) {
+                    if(opt.texture.getBounds().contains((int) event.getRawX(), (int) event.getRawY())){
+                        this.currentChoice = opt.option;
+                        select();
+                        break;
+                    }
+                }
+                /*
                 for(int i=0; i<optionsrange.length-1; i++) {
                     if(event.getRawY()>optionsrange[i] && event.getRawY()<optionsrange[i+1]){
                         if(this.currentChoice == i){
@@ -130,6 +187,7 @@ public class MenuState extends GameState{
                         break;
                     }
                 }
+                */
                 break;
         }
     }

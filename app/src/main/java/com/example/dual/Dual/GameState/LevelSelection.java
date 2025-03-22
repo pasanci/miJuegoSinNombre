@@ -36,7 +36,6 @@ public class LevelSelection extends GameState {
     private Paint paintB;
     private Paint paintR;
     private Bitmap tempBitmap;
-    private Canvas tempImage;
     private Pair<Integer,Integer> clickPos;
     private Bitmap splash;
     private Random random;
@@ -85,7 +84,6 @@ public class LevelSelection extends GameState {
         paintB.setColor(ContextCompat.getColor(context, R.color.cyan));
         paintR.setColor(ContextCompat.getColor(context, R.color.red));
         this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
-        this.tempImage = new Canvas(tempBitmap);
         clickPos = null;
     }
 
@@ -109,6 +107,13 @@ public class LevelSelection extends GameState {
             }
             int pos = i%3;
             canvas.drawBitmap(tempBitmap,(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
+            if(clickPos!=null && gsm.getCurrentLevel()-1 == i) {
+                Bitmap b = tempBitmap.copy(tempBitmap.getConfig(),true);
+                Canvas splashCanvas = new Canvas(b);
+                splashCanvas.drawBitmap(splash, (clickPos.first-pos*section-(section/8)) - splash.getWidth()/2, (clickPos.second-currentY-this.desplazamiento-(section/8))-splash.getHeight()/2, paintSplash);
+                //splashCanvas.drawBitmap(splash, 0, 0, paintSplash);
+                canvas.drawBitmap(b,(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
+            }
             //canvas.drawRect((float) (pos*section)+(section/8), (float) currentY+(section/8)-this.desplazamiento, (float) ((pos+1)*section)-(section/8), (float) currentY+section-(section/8)-this.desplazamiento, paint);
             textPaint.setTextAlign(Paint.Align.CENTER);
             textPaint.setColor(ContextCompat.getColor(context, R.color.black));
@@ -116,10 +121,6 @@ public class LevelSelection extends GameState {
             canvas.drawText("" + (i + 1), (((pos * section) + ((pos + 1) * section)) / 2), (currentY + section) - (section / 2) - ((textPaint.descent() + textPaint.ascent()) / 2) - this.desplazamiento, textPaint);
             if(pos == 2){
                 currentY+=section;
-            }
-            if(clickPos!=null) {
-                //this.tempImage.drawBitmap(b,((int)dx)-b.getWidth()/2,((int)dy)-b.getHeight()/2,paintB);
-                canvas.drawBitmap(splash, clickPos.first - splash.getWidth() / 2, clickPos.second - splash.getHeight() / 2, paintSplash);
             }
         }
         this.paint.setAlpha(prev);
@@ -153,15 +154,15 @@ public class LevelSelection extends GameState {
                 break;
             case MotionEvent.ACTION_UP:
                 if(!this.validDesplazamiento && this.validClick) {
-                    int x = (int) (event.getRawX() / this.section);
-                    int y = (int) ((event.getRawY() + this.desplazamiento) / this.section);
+                    int x = (int) (event.getX() / this.section);
+                    int y = (int) ((event.getY() + this.desplazamiento) / this.section);
                     int n = ((y * 3) + (x + 1));
                     if(n<=this.maxLevel) {
                         this.transitionTime = System.currentTimeMillis()+1000;
                         gsm.setCurrentLevel(n);
+                        clickPos = clickPos.create((int) event.getX(),(int) event.getY());
                         //gsm.setState(GameStateManager.RUNNINGSTATE);
                     }
-                    clickPos = clickPos.create((int) event.getRawX(),(int) event.getRawY());
                     if(random.nextBoolean()) {
                         paintSplash = paintR;
                         splash = gsm.textures.splashesR[new Random().nextInt((3)+1)];
