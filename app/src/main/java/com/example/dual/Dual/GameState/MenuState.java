@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
@@ -35,6 +36,7 @@ public class MenuState extends GameState{
         public String name;
         public int option;
         public int left, top, right, bottom;
+        public Rect bounds;
         public Option(int constant){
             if(constant == START) {
                 this.option = START;
@@ -102,7 +104,8 @@ public class MenuState extends GameState{
         int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
             //options[i].texture.setBounds((section/2)+(section/8), currentY+(section/8), (section/2)+(section)-(section/8), currentY+section-(section/8));
-            options[i].texture.setBounds((section/2)+(section/4), currentY+(section/8), (section/2)+(section)-(section/4), currentY+section-(section/3));
+            options[i].bounds = new Rect((section/2)+(section/8), currentY+(section/8), (section/2)+section-(section/8), currentY+section-(section/8));
+            options[i].texture.setBounds((section/2)+(section/4), currentY+(section/8), (section/2)+section-(section/4), currentY+section-(section/3));
             currentY += section;
         }
         optionPaint.setTextSize(90);
@@ -188,7 +191,7 @@ public class MenuState extends GameState{
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 for(Option opt:options) {
-                    if(opt.texture.getBounds().contains((int) event.getRawX(), (int) event.getRawY())){
+                    if(opt.bounds.contains((int) event.getX(), (int) event.getY())){
                         this.currentChoice = opt.option;
                         select();
                         break;

@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.graphics.fonts.Font;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
@@ -19,6 +21,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.dual.Dual.TileMap.Background;
 import com.example.dual.R;
+
+import java.util.Random;
 
 public class OptionsState extends GameState{
 
@@ -29,17 +33,28 @@ public class OptionsState extends GameState{
     private int currentChoice = 0;
     private class Option{
         public static final int DELETE = 0;
-        public static final int OPTIONS = 1;
-        public static final int QUIT = 2;
+        public static final int UNLOCK = 1;
+        public static final int SKIP = 2;
         public VectorDrawable texture;
         public String name;
         public int option;
         public int left, top, right, bottom;
+        public Rect bounds;
         public Option(int constant){
             if(constant == DELETE) {
                 this.option = DELETE;
                 this.name = "Reset";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.delete_vector);
+            }
+            else if(constant == UNLOCK) {
+                this.option = UNLOCK;
+                this.name = "Desbloquear";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.unlock_vector);
+            }
+            else if(constant == SKIP) {
+                this.option = SKIP;
+                this.name = "Saltar";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.skip_vector);
             }
         }
         public Option(int constant,int left,int top,int right,int bottom){
@@ -63,12 +78,23 @@ public class OptionsState extends GameState{
     Paint optionPaint = new Paint();
     boolean doubleBackToExitPressedOnce = false;
     int colorMagenta;
+    private boolean validClick;
+    private Bitmap splash;
+    private Random random;
+    private Paint paintSplash;
+    private Paint paintB;
+    private Paint paintR;
+    private Paint paint;
+    private Pair<Integer,Integer> clickPos;
 
     public OptionsState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
         this.context = context;
+        this.validClick = false;
         this.options = new Option[]{
-                new Option(Option.DELETE)
+                new Option(Option.DELETE),
+                new Option(Option.UNLOCK),
+                new Option(Option.SKIP)
         };
         this.optionsrange = new float [options.length + 1];
         for(int i=0; i<options.length; i++) {
@@ -82,23 +108,30 @@ public class OptionsState extends GameState{
             e.printStackTrace();
         }
         this.section = (this.gsm.getActualWidth()/2);
-        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
 
         textPaint.setTextSize(50);
         int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
+            options[i].bounds = new Rect((section/2)+(section/8), currentY+(section/8), (section/2)+section-(section/8), currentY+section-(section/8));
             options[i].texture.setBounds((section/2)+(section/4), currentY+(section/8), (section/2)+(section)-(section/4), currentY+section-(section/3));
             currentY += section;
         }
         colorMagenta = ContextCompat.getColor(this.context, R.color.magenta);
         textPaint.setColor(colorMagenta);
         textPaint.setTextAlign(Paint.Align.LEFT);
-        optionPaint.setTextSize(100);
+        optionPaint.setTextSize(70);
         optionPaint.setColor(Color.BLACK);
         optionPaint.setTextAlign(Paint.Align.CENTER);
         optionPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        this.paintB = new Paint();
+        this.paintR = new Paint();
+        this.random = new Random();
     }
-    public void init() {}
+    public void init() {
+        clickPos = null;
+        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
+    }
+
     public void update() {
         bg.update();
     }
@@ -110,6 +143,13 @@ public class OptionsState extends GameState{
         currentY = (int) (currentY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
             canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
+            if(clickPos!=null) {
+                Bitmap b = tempBitmap.copy(tempBitmap.getConfig(),true);
+                Canvas splashCanvas = new Canvas(b);
+                splashCanvas.drawBitmap(splash, (clickPos.first-(section/2)-(section/8)) - splash.getWidth()/2, (clickPos.second-currentY-(section/8))-splash.getHeight()/2, paintSplash);
+                //splashCanvas.drawBitmap(splash, 0, 0, paintSplash);
+                canvas.drawBitmap(b,(section/2)+(section/8),currentY+(section/8),paint);
+            }
             options[i].texture.draw(canvas);
             canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);
             currentY += section;
@@ -124,12 +164,33 @@ public class OptionsState extends GameState{
     public void notifyTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                for(Option opt:options) {
-                    if(opt.texture.getBounds().contains((int) event.getRawX(), (int) event.getRawY())){
-                        gsm.setMaxLevel(1);
-                        break;
+                this.validClick = true;
+                break;
+            case MotionEvent.ACTION_UP:
+                if (this.validClick) {
+                    for (Option opt : options) {
+                        if(opt.bounds.contains((int) event.getX(), (int) event.getY())){
+                            if (opt.option == Option.DELETE) {
+                                gsm.setMaxLevel(1);
+                            } else if (opt.option == Option.UNLOCK) {
+                                gsm.setMaxLevel(gsm.getLevels().getLevelsNumber());
+                            } else if (opt.option == Option.SKIP) {
+                                gsm.setMaxLevel(gsm.getMaxLevel() + 1);
+                            }
+                            clickPos = clickPos.create((int) event.getX(),(int) event.getY());
+                            break;
+                        }
+                    }
+                    if(random.nextBoolean()) {
+                        paintSplash = paintR;
+                        splash = gsm.textures.splashesR[new Random().nextInt((3)+1)];
+                    }
+                    else{
+                        paintSplash = paintB;
+                        splash = gsm.textures.splashesB[new Random().nextInt((3)+1)];
                     }
                 }
+                this.validClick = false;
                 break;
         }
     }

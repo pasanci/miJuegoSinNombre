@@ -54,7 +54,7 @@ public class ObstacleCreator {
         }
         else if (type == SMALLHOLE){
             percentaje1 = 20;
-            percentaje2 = 60;
+            percentaje2 = 58;
         }
         if(rotating == STEADY && fading == SOLID){
             if(type == CENTER){
@@ -101,7 +101,7 @@ public class ObstacleCreator {
         }
         else if (type == SMALLHOLE){
             percentaje1 = 20;
-            percentaje2 = 60;
+            percentaje2 = 58;
         }
         if ((type == HOLE || type == SMALLHOLE) && fading == FADING) {
             if(side == LEFT) {

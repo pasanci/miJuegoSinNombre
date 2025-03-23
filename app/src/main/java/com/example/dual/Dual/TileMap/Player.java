@@ -168,13 +168,15 @@ public class Player{
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(fx, fy, fd, paint);
         paint.setStyle(Paint.Style.FILL);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setColor(ContextCompat.getColor(context, R.color.white));
-        textPaint.setAlpha((int)(transparency*250));
-        textPaint.setTextSize((float)fd);
-        canvas.drawText(this.level, (this.gsm.getActualWidth()/2), fy-((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
-        textPaint.setAlpha(100);
 
+        if(!waitingRestart) {
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            textPaint.setColor(ContextCompat.getColor(context, R.color.white));
+            textPaint.setAlpha((int)(transparency*250));
+            textPaint.setTextSize((float)fd);
+            canvas.drawText(this.level, (this.gsm.getActualWidth()/2), fy-((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
+            textPaint.setAlpha(100);
+        }
         paint.setColor(this.color1);
         //g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

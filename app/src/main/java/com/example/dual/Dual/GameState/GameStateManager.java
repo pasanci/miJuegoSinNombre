@@ -56,6 +56,10 @@ public class GameStateManager {
         editor.apply();
     }
 
+    public int getMaxLevel() {
+        return sharedPref.getInt(SAVEGAMESTR, 1);
+    }
+
     public Levels getLevels() {
         return levels;
     }

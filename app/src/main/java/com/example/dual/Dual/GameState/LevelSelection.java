@@ -71,6 +71,8 @@ public class LevelSelection extends GameState {
         this.paintB = new Paint();
         this.paintR = new Paint();
         this.random = new Random();
+        paintB.setColor(ContextCompat.getColor(context, R.color.cyan));
+        paintR.setColor(ContextCompat.getColor(context, R.color.red));
         init();
     }
 
@@ -80,8 +82,6 @@ public class LevelSelection extends GameState {
         this.desplazamiento = 0;
         this.validDesplazamiento = false;
         this.maxLevel = sharedPref.getInt(SAVEGAMESTR, 1);
-        paintB.setColor(ContextCompat.getColor(context, R.color.cyan));
-        paintR.setColor(ContextCompat.getColor(context, R.color.red));
         this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
         clickPos = null;
     }
@@ -153,7 +153,7 @@ public class LevelSelection extends GameState {
                 this.validDesplazamiento = true;
                 break;
             case MotionEvent.ACTION_UP:
-                if(!this.validDesplazamiento && this.validClick) {
+                if(!this.validDesplazamiento && this.validClick && clickPos == null) {
                     int x = (int) (event.getX() / this.section);
                     int y = (int) ((event.getY() + this.desplazamiento) / this.section);
                     int n = ((y * 3) + (x + 1));

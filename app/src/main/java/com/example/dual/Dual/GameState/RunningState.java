@@ -100,6 +100,7 @@ public class RunningState extends GameState{
                 }
             }
             else {
+                player.setWaitingRestart(false);
                 this.frameTime = this.gsm.getFrameTime();
                 for (Obstacle obstacle : obstacles) {
                     obstacle.setFrameTime(this.frameTime);
