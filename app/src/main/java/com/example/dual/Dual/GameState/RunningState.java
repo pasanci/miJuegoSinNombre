@@ -176,10 +176,6 @@ public class RunningState extends GameState{
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(canvas);
         }
-
-        if(levelCompleted) {
-
-        }
     }
 
     public void drawDebug(Canvas canvas) {
@@ -209,12 +205,6 @@ public class RunningState extends GameState{
         double fBallDiam = ((2*player.getBallRadius())/this.gsm.getWidth()*this.gsm.getActualWidth());
         canvas.drawCircle((int)x1, (int)y1, (float) fBallDiam, paint);
         canvas.drawCircle((int)x2, (int)y2, (float) fBallDiam, paint);
-
-        if(levelCompleted) {
-            //b.draw(g);
-
-            //canvas.drawImage(this.textures.chikito, 0, 0, Main.WIDTH, (int)(((double)Main.WIDTH/this.textures.chikito.getWidth())*this.textures.chikito.getHeight()), null);
-        }
     }
 
     /*
@@ -297,7 +287,7 @@ public class RunningState extends GameState{
 
     @Override
     public void notifyBackPressed() {
-
+        gsm.setState(GameStateManager.LEVELSELECTIONSTATE);
     }
 
 }

@@ -51,6 +51,11 @@ public class GameStateManager {
         }
     }
 
+    public void setMaxLevel(int maxLevel) {
+        editor.putInt(SAVEGAMESTR, maxLevel);
+        editor.apply();
+    }
+
     public Levels getLevels() {
         return levels;
     }
@@ -124,7 +129,7 @@ public class GameStateManager {
 
     public void notifyBackPressed() {
         gameStates.get(currentState).notifyBackPressed();
-        this.currentState = 0;
+        //this.currentState = 0;
     }
 
     public int getWidth() {

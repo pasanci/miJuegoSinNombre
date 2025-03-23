@@ -6,10 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.graphics.fonts.Font;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -34,17 +38,20 @@ public class MenuState extends GameState{
         public Option(int constant){
             if(constant == START) {
                 this.option = START;
-                this.name = "Start";
+                //this.name = "Start";
+                this.name = "Jugar";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.play_vector);
             }
             else if(constant == OPTIONS) {
                 this.option = OPTIONS;
-                this.name = "Options";
+                //this.name = "Options";
+                this.name = "Opciones";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.settings_vector);
             }
             else if(constant == QUIT) {
                 this.option = QUIT;
-                this.name = "Quit";
+                //this.name = "Quit";
+                this.name = "Salir";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.close_vector);
             }
         }
@@ -66,6 +73,8 @@ public class MenuState extends GameState{
     private Font titleFont;
     private Font font;
     Paint textPaint = new Paint();
+    Paint optionPaint = new Paint();
+    boolean doubleBackToExitPressedOnce = false;
 
     public MenuState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
@@ -92,9 +101,14 @@ public class MenuState extends GameState{
         textPaint.setTextSize(50);
         int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
-            options[i].texture.setBounds((section/2)+(section/8), currentY+(section/8), (section/2)+(section)-(section/8), currentY+section-(section/8));
+            //options[i].texture.setBounds((section/2)+(section/8), currentY+(section/8), (section/2)+(section)-(section/8), currentY+section-(section/8));
+            options[i].texture.setBounds((section/2)+(section/4), currentY+(section/8), (section/2)+(section)-(section/4), currentY+section-(section/3));
             currentY += section;
         }
+        optionPaint.setTextSize(90);
+        optionPaint.setColor(Color.BLACK);
+        optionPaint.setTextAlign(Paint.Align.CENTER);
+        optionPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
     public void init() {}
     public void update() {
@@ -130,8 +144,13 @@ public class MenuState extends GameState{
             else {
                 color = ContextCompat.getColor(this.context, R.color.red);
             }
+            /*
             canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
             options[i].texture.draw(canvas);
+            */
+            canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
+            options[i].texture.draw(canvas);
+            canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);
             currentY += section;
         }
     }
@@ -194,6 +213,19 @@ public class MenuState extends GameState{
 
     @Override
     public void notifyBackPressed() {
+        System.out.println("notifyBackPressed= "+this.doubleBackToExitPressedOnce);
+        if (this.doubleBackToExitPressedOnce) {
+            System.exit(0);
+        }
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        this.doubleBackToExitPressedOnce = true;
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
 }

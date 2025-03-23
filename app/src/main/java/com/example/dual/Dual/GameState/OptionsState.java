@@ -2,11 +2,18 @@ package com.example.dual.Dual.GameState;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.graphics.fonts.Font;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -16,23 +23,53 @@ import com.example.dual.R;
 public class OptionsState extends GameState{
 
     private Background bg;
+    private Bitmap tempBitmap;
+    private int section;
 
     private int currentChoice = 0;
-    private double scale;
-    private String[] options = {
-            "Scale: " + scale
-    };
+    private class Option{
+        public static final int DELETE = 0;
+        public static final int OPTIONS = 1;
+        public static final int QUIT = 2;
+        public VectorDrawable texture;
+        public String name;
+        public int option;
+        public int left, top, right, bottom;
+        public Option(int constant){
+            if(constant == DELETE) {
+                this.option = DELETE;
+                this.name = "Reset";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.delete_vector);
+            }
+        }
+        public Option(int constant,int left,int top,int right,int bottom){
+            this(constant);
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
+        }
+    }
+
+    private Option[] options;
+
+    float [] optionsrange;
+    float startY = 80;
 
     private Color titleColor;
     private Font titleFont;
     private Font font;
-
-    float [] optionsrange;
-    float startY = 280;
+    Paint textPaint = new Paint();
+    Paint optionPaint = new Paint();
+    boolean doubleBackToExitPressedOnce = false;
+    int colorMagenta;
 
     public OptionsState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
         this.context = context;
+        this.options = new Option[]{
+                new Option(Option.DELETE)
+        };
         this.optionsrange = new float [options.length + 1];
         for(int i=0; i<options.length; i++) {
             this.optionsrange[i] = (startY +i*100+50);
@@ -40,119 +77,57 @@ public class OptionsState extends GameState{
         this.optionsrange[optionsrange.length-1] = (startY +optionsrange.length*100-50);
         try {
             bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
-            init();
         }
         catch(Exception e) {
             e.printStackTrace();
         }
+        this.section = (this.gsm.getActualWidth()/2);
+        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
+
+        textPaint.setTextSize(50);
+        int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
+        for(int i=0; i<options.length; i++) {
+            options[i].texture.setBounds((section/2)+(section/4), currentY+(section/8), (section/2)+(section)-(section/4), currentY+section-(section/3));
+            currentY += section;
+        }
+        colorMagenta = ContextCompat.getColor(this.context, R.color.magenta);
+        textPaint.setColor(colorMagenta);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        optionPaint.setTextSize(100);
+        optionPaint.setColor(Color.BLACK);
+        optionPaint.setTextAlign(Paint.Align.CENTER);
+        optionPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
-    public void init() {
-        this.scale = gsm.getScale();
-        options[0]="Scale: " + ((float)this.scale);
-    }
+    public void init() {}
     public void update() {
         bg.update();
     }
 
-    private void select() {
-    }
-
     public void draw(Canvas canvas) {
+        int currentY = (int) startY;
         bg.draw(canvas);
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(this.context, R.color.magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("El jueguito", 80, startY, paint);
-
+        canvas.drawText("El jueguito", 80, startY, textPaint);
+        currentY = (int) (currentY+((textPaint.descent() + textPaint.ascent()) / 2));
         for(int i=0; i<options.length; i++) {
-            if(i == currentChoice) {
-                color = ContextCompat.getColor(this.context, R.color.white);
-            }
-            else {
-                color = ContextCompat.getColor(this.context, R.color.red);
-            }
-            paint.setColor(color);
-            canvas.drawText(options[i], 145,(startY + 100 +i*100), paint);
+            canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
+            options[i].texture.draw(canvas);
+            canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);
+            currentY += section;
         }
     }
-
-/*
-    public void keyPressed(int k) {
-        if(k==KeyEvent.VK_ENTER) {
-            select();
-        }
-        if(k == KeyEvent.VK_UP) {
-            currentChoice--;
-            if(currentChoice<0) {
-                currentChoice = options.length -1;
-            }
-        }
-        if(k == KeyEvent.VK_DOWN) {
-            currentChoice++;
-            if(currentChoice>options.length-1) {
-                currentChoice = 0;
-            }
-        }
-        if(k == KeyEvent.VK_LEFT) {
-            if(currentChoice == 0 && scale>0.1) {
-                scale -= 0.1;
-                scale = (double)Math.round(scale * 10d) / 10d;
-                options[0]="Scale: " + ((float)this.scale);
-            }
-        }
-        if(k == KeyEvent.VK_RIGHT) {
-            if(currentChoice == 0) {
-                scale += 0.1;
-                options[0]="Scale: " + ((float)this.scale);
-            }
-        }
-        if(k == KeyEvent.VK_ESCAPE) {
-            gsm.setState(GameStateManager.MENUSTATE);
-        }
-        if(k == KeyEvent.VK_ENTER) {
-            gsm.setScale((float)this.scale);
-        }
-    }
-
-    public void keyReleased(int k) {
-
-    }
-*/
 
     public void setPause() {
 
     }
 
-    @Override
+
     public void notifyTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                boolean selection = false;
-                for(int i=0; i<optionsrange.length-1; i++) {
-                    if(event.getRawY()>optionsrange[i] && event.getRawY()<optionsrange[i+1]){
-                        selection = true;
-                        if(this.currentChoice == i){
-                            select();
-                        }
-                        else {
-                            this.currentChoice = i;
-                        }
+                for(Option opt:options) {
+                    if(opt.texture.getBounds().contains((int) event.getRawX(), (int) event.getRawY())){
+                        gsm.setMaxLevel(1);
                         break;
-                    }
-                }
-                if(!selection) {
-                    if (event.getRawX() < Resources.getSystem().getDisplayMetrics().widthPixels * 0.5) {
-                        if (currentChoice == 0 && scale > 0.1) {
-                            scale -= 0.1;
-                            scale = (double) Math.round(scale * 10d) / 10d;
-                            options[0] = "Scale: " + ((float) this.scale);
-                        }
-                    } else {
-                        if (currentChoice == 0) {
-                            scale += 0.1;
-                            options[0] = "Scale: " + ((float) this.scale);
-                        }
                     }
                 }
                 break;
@@ -161,6 +136,7 @@ public class OptionsState extends GameState{
 
     @Override
     public void notifyBackPressed() {
-        gsm.setScale((float)this.scale);
+        gsm.setState(GameStateManager.MENUSTATE);
     }
+
 }

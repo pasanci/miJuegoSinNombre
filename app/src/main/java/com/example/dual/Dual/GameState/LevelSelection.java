@@ -79,7 +79,6 @@ public class LevelSelection extends GameState {
         this.transitionTime = -1;
         this.desplazamiento = 0;
         this.validDesplazamiento = false;
-        this.validClick = false;
         this.maxLevel = sharedPref.getInt(SAVEGAMESTR, 1);
         paintB.setColor(ContextCompat.getColor(context, R.color.cyan));
         paintR.setColor(ContextCompat.getColor(context, R.color.red));
@@ -138,6 +137,7 @@ public class LevelSelection extends GameState {
     public void notifyTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                this.validClick = true;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(this.validDesplazamiento) {
@@ -173,12 +173,12 @@ public class LevelSelection extends GameState {
                     }
                 }
                 this.validDesplazamiento = false;
-                this.validClick = true;
+                this.validClick = false;
         }
     }
 
     @Override
     public void notifyBackPressed() {
-
+        gsm.setState(GameStateManager.MENUSTATE);
     }
 }
