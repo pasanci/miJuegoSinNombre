@@ -26,11 +26,6 @@ import java.util.Random;
 
 public class OptionsState extends GameState{
 
-    private Background bg;
-    private Bitmap tempBitmap;
-    private int section;
-
-    private int currentChoice = 0;
     private class Option{
         public static final int DELETE = 0;
         public static final int UNLOCK = 1;
@@ -66,6 +61,11 @@ public class OptionsState extends GameState{
         }
     }
 
+    private Background bg;
+    private Bitmap tempBitmap;
+    private int section;
+
+    private int currentChoice = 0;
     private Option[] options;
 
     float [] optionsrange;
@@ -84,7 +84,6 @@ public class OptionsState extends GameState{
     private Paint paintSplash;
     private Paint paintB;
     private Paint paintR;
-    private Paint paint;
     private Pair<Integer,Integer> clickPos;
 
     public OptionsState(GameStateManager gsm, Context context) {
@@ -126,6 +125,7 @@ public class OptionsState extends GameState{
         this.paintB = new Paint();
         this.paintR = new Paint();
         this.random = new Random();
+        init();
     }
     public void init() {
         clickPos = null;
@@ -148,7 +148,7 @@ public class OptionsState extends GameState{
                 Canvas splashCanvas = new Canvas(b);
                 splashCanvas.drawBitmap(splash, (clickPos.first-(section/2)-(section/8)) - splash.getWidth()/2, (clickPos.second-currentY-(section/8))-splash.getHeight()/2, paintSplash);
                 //splashCanvas.drawBitmap(splash, 0, 0, paintSplash);
-                canvas.drawBitmap(b,(section/2)+(section/8),currentY+(section/8),paint);
+                canvas.drawBitmap(b,(section/2)+(section/8),currentY+(section/8),textPaint);
             }
             options[i].texture.draw(canvas);
             canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);

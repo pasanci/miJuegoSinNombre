@@ -123,9 +123,6 @@ public class LevelSelection extends GameState {
             }
         }
         this.paint.setAlpha(prev);
-        if(this.transitionTime>0){
-            System.out.println("draw");
-        }
     }
 
     @Override
@@ -158,7 +155,7 @@ public class LevelSelection extends GameState {
                     int y = (int) ((event.getY() + this.desplazamiento) / this.section);
                     int n = ((y * 3) + (x + 1));
                     if(n<=this.maxLevel) {
-                        this.transitionTime = System.currentTimeMillis()+1000;
+                        this.transitionTime = System.currentTimeMillis()+500;
                         gsm.setCurrentLevel(n);
                         clickPos = clickPos.create((int) event.getX(),(int) event.getY());
                         //gsm.setState(GameStateManager.RUNNINGSTATE);

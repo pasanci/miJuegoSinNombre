@@ -21,6 +21,7 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
     public Main(Context context) {
         super(context);
         gsm = new GameStateManager(context);
+        gsm.setState(GameStateManager.MENUSTATE);
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 

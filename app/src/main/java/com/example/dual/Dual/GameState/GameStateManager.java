@@ -22,6 +22,7 @@ public class GameStateManager {
     private double scale = 1.0;
     private Context context;
 
+    public static final int EXIT = -1;
     public static final int MENUSTATE = 0;
     public static final int OPTIONSSTATE = 1;
     public static final int RUNNINGSTATE = 2;
