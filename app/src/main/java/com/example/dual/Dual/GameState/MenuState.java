@@ -217,7 +217,6 @@ public class MenuState extends GameState{
 
     }
 
-
     public void notifyTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
