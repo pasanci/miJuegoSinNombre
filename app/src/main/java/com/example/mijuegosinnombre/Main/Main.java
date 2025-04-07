@@ -12,15 +12,19 @@ import androidx.core.content.ContextCompat;
 import com.example.mijuegosinnombre.GameState.GameStateManager;
 import com.example.mijuegosinnombre.R;
 
+import java.text.DecimalFormat;
+
 public class Main extends SurfaceView implements SurfaceHolder.Callback {
     private GameLoop gameLoop;
     private Context context;
     //public double SCALE;
     private GameStateManager gsm;
 
-    public Main(Context context) {
+    public Main(Context context, int topMargin, int bottomMargin) {
         super(context);
         gsm = new GameStateManager(context);
+        gsm.setTopMargin(topMargin);
+        gsm.setBottomMargin(bottomMargin);
         gsm.setState(GameStateManager.MENUSTATE);
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
@@ -59,13 +63,15 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         gsm.draw(canvas);
-        //drawUPS(canvas);
-        //drawFPS(canvas);
-        //drawResolution(canvas);
+        if(gsm.getShowFPS()) {
+            drawUPS(canvas);
+            drawFPS(canvas);
+        }
     }
 
     public void update() {
         gsm.setFrameTime((long)gameLoop.getAverageUPS());
+        //gsm.setFrameTime((long)gameLoop.getLastFrameTime());
         gsm.update();
     }
 
@@ -78,17 +84,9 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawText("UPS: " + averageUPS, 100,100, paint);
     }
 
-    public void drawResolution(Canvas canvas) {
-        String averageUPS = Double.toString(gameLoop.getAverageUPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(context, R.color.magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("UPS: " + averageUPS, 100,100, paint);
-    }
-
     public void drawFPS(Canvas canvas) {
-        String averageFPS = Double.toString(gameLoop.getAverageFPS());
+        DecimalFormat df = new DecimalFormat("#.##");
+        String averageFPS = df.format(gameLoop.getAverageFPS());
         Paint paint = new Paint();
         int color = ContextCompat.getColor(context, R.color.magenta);
         paint.setColor(color);

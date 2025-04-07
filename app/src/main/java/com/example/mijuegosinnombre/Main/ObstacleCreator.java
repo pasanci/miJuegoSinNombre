@@ -80,12 +80,12 @@ public class ObstacleCreator {
         }
         else if(rotating == ROTATING && fading == SOLID){
             obstacles.add(new RotatingObstacle(this.gsm, this.textures,this.y,25,blockWidth,Math.PI,realside));
-            this.y -= 1600;
+            this.y -= 1000;
             //this.y -= 1000;
         }
         else{
             obstacles.add(new FadingRotatingObstacle(this.gsm, this.textures,this.y,25,blockWidth,Math.PI,realside));
-            this.y -= 1600;
+            this.y -= 1000;
             //this.y -= 1000;
         }
     }

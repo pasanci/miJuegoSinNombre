@@ -310,6 +310,8 @@ public class Levels {
         level.add(new SimpleObstacle(HALF, STEADY, FADING, RIGHT));
         level.add(new SimpleObstacle(SMALLHOLE, STEADY, FADING, LEFT));
         this.levelsList.add(level);
+        level = new ArrayList<SimpleObstacle>();
+        this.levelsList.add(level);
     }
 
     public List<Obstacle> restartLevel() {

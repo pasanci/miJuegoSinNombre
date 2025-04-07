@@ -1,28 +1,21 @@
 package com.example.mijuegosinnombre.GameState;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.graphics.fonts.Font;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Pair;
 import android.view.MotionEvent;
-import android.widget.Toast;
-
 import androidx.core.content.ContextCompat;
+import java.util.Random;
 
 import com.example.mijuegosinnombre.TileMap.Background;
 import com.example.mijuegosinnombre.R;
-
-import java.util.Random;
 
 public class OptionsState extends GameState{
 
@@ -30,6 +23,7 @@ public class OptionsState extends GameState{
         public static final int DELETE = 0;
         public static final int UNLOCK = 1;
         public static final int SKIP = 2;
+        public static final int SHOWFPS = 3;
         public VectorDrawable texture;
         public String name;
         public int option;
@@ -49,6 +43,11 @@ public class OptionsState extends GameState{
             else if(constant == SKIP) {
                 this.option = SKIP;
                 this.name = "Saltar";
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.skip_vector);
+            }
+            else if(constant == SHOWFPS) {
+                this.option = SHOWFPS;
+                this.name = "FPS";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.skip_vector);
             }
         }
@@ -93,8 +92,10 @@ public class OptionsState extends GameState{
         this.options = new Option[]{
                 new Option(Option.DELETE),
                 new Option(Option.UNLOCK),
-                new Option(Option.SKIP)
+                new Option(Option.SKIP),
+                new Option(Option.SHOWFPS)
         };
+        gsm.setShowFPS(gsm.getSharedPreferences().getBoolean(GameStateManager.SHOWFPSSTR, false));
         this.optionsrange = new float [options.length + 1];
         for(int i=0; i<options.length; i++) {
             this.optionsrange[i] = (startY +i*100+50);
@@ -141,6 +142,10 @@ public class OptionsState extends GameState{
         bg.draw(canvas);
         canvas.drawText("El jueguito", 80, startY, textPaint);
         currentY = (int) (currentY+((textPaint.descent() + textPaint.ascent()) / 2));
+        int prev = this.textPaint.getAlpha();
+        if(!gsm.DEBUG) {
+            this.textPaint.setAlpha(80);
+        }
         for(int i=0; i<options.length; i++) {
             canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
             if(clickPos!=null) {
@@ -154,6 +159,7 @@ public class OptionsState extends GameState{
             canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);
             currentY += section;
         }
+        this.textPaint.setAlpha(prev);
     }
 
     public void setPause() {
@@ -168,26 +174,31 @@ public class OptionsState extends GameState{
                 break;
             case MotionEvent.ACTION_UP:
                 if (this.validClick) {
-                    for (Option opt : options) {
-                        if(opt.bounds.contains((int) event.getX(), (int) event.getY())){
-                            if (opt.option == Option.DELETE) {
-                                gsm.setMaxLevel(1);
-                            } else if (opt.option == Option.UNLOCK) {
-                                gsm.setMaxLevel(gsm.getLevels().getLevelsNumber());
-                            } else if (opt.option == Option.SKIP) {
-                                gsm.setMaxLevel(gsm.getMaxLevel() + 1);
+                    if(gsm.DEBUG) {
+                        for (Option opt : options) {
+                            if(opt.bounds.contains((int) event.getX(), (int) event.getY())){
+                                if (opt.option == Option.DELETE) {
+                                    gsm.setMaxLevel(1);
+                                } else if (opt.option == Option.UNLOCK) {
+                                    gsm.setMaxLevel(gsm.getLevels().getLevelsNumber());
+                                } else if (opt.option == Option.SKIP) {
+                                    gsm.setMaxLevel(gsm.getMaxLevel() + 1);
+                                } else if (opt.option == Option.SHOWFPS) {
+                                    gsm.getEditor().putBoolean(GameStateManager.SHOWFPSSTR, !gsm.getShowFPS());
+                                    gsm.setShowFPS(!gsm.getShowFPS());
+                                }
+                                clickPos = clickPos.create((int) event.getX(),(int) event.getY());
+                                break;
                             }
-                            clickPos = clickPos.create((int) event.getX(),(int) event.getY());
-                            break;
                         }
-                    }
-                    if(random.nextBoolean()) {
-                        paintSplash = paintR;
-                        splash = gsm.textures.splashesR[new Random().nextInt((3)+1)];
-                    }
-                    else{
-                        paintSplash = paintB;
-                        splash = gsm.textures.splashesB[new Random().nextInt((3)+1)];
+                        if(random.nextBoolean()) {
+                            paintSplash = paintR;
+                            splash = gsm.textures.splashesR[new Random().nextInt((3)+1)];
+                        }
+                        else{
+                            paintSplash = paintB;
+                            splash = gsm.textures.splashesB[new Random().nextInt((3)+1)];
+                        }
                     }
                 }
                 this.validClick = false;

@@ -53,12 +53,12 @@ public class RotatingObstacle extends Obstacle{
 
     public void update() {
         super.update();
-        int dist = (int) ((playerHeight-getY())%1600);
+        int dist = (int) ((playerHeight-getY())%1000);
         if(direction) {
-            this.angle = (360.0/1600)*dist;
+            this.angle = (360.0/1000)*dist;
         }
         else{
-            this.angle = (-360.0/1600)*dist;
+            this.angle = (-360.0/1000)*dist;
         }
         //this.angle = normalizeAngle(this.angle*Math.PI/180);
         this.angle = this.angle*Math.PI/180;

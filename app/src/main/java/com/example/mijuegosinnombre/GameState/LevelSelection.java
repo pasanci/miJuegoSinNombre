@@ -9,13 +9,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Pair;
 import android.view.MotionEvent;
-
 import androidx.core.content.ContextCompat;
-
 import com.example.mijuegosinnombre.TileMap.Background;
 import com.example.mijuegosinnombre.R;
-
 import java.util.Random;
+
 public class LevelSelection extends GameState {
 
     private Background bg;
@@ -40,9 +38,11 @@ public class LevelSelection extends GameState {
     private Bitmap splash;
     private Random random;
     private long  transitionTime;
+    private int startY = 0;
 
     LevelSelection(GameStateManager gsm, Context context){
         this.gsm = gsm;
+        startY += gsm.getTopMargin();
         this.context = context;
         try {
             this.bg = new Background(gsm, ContextCompat.getColor(context, R.color.black));
@@ -97,7 +97,7 @@ public class LevelSelection extends GameState {
     @Override
     public void draw(Canvas canvas) {
         bg.draw(canvas);
-        int currentY = 0;
+        int currentY = startY;
         int prev = this.paint.getAlpha();
         paint.setColor(ContextCompat.getColor(context, R.color.white));
         for(int i = 0; i<numberLevels; i++) {
@@ -152,7 +152,7 @@ public class LevelSelection extends GameState {
             case MotionEvent.ACTION_UP:
                 if(!this.validDesplazamiento && this.validClick && clickPos == null) {
                     int x = (int) (event.getX() / this.section);
-                    int y = (int) ((event.getY() + this.desplazamiento) / this.section);
+                    int y = (int) ((event.getY() + this.desplazamiento - this.startY) / this.section);
                     int n = ((y * 3) + (x + 1));
                     if(n<=this.maxLevel) {
                         this.transitionTime = System.currentTimeMillis()+500;

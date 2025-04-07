@@ -72,7 +72,7 @@ public class MenuState extends GameState{
     private Option[] options;
 
     float [] optionsrange;
-    float startY = 80;
+    float startY = 160;
 
     private Color titleColor;
     private Font titleFont;
@@ -93,6 +93,7 @@ public class MenuState extends GameState{
 
     public MenuState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
+        startY += gsm.getTopMargin();
         this.context = context;
         this.validClick = false;
         this.options = new Option[]{

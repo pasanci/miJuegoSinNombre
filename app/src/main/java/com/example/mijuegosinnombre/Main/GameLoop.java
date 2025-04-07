@@ -18,7 +18,7 @@ public class GameLoop extends Thread{
     private double averageFPS;
     private static final double MAX_UPS = 60;
     private static final double UPS_PERIOD = 1E+3/MAX_UPS;
-
+    private long lastFrameTime;
 
     public GameLoop(Main game, SurfaceHolder surfaceHolder, Context context) {
         this.game = game;
@@ -93,8 +93,9 @@ public class GameLoop extends Thread{
             }
 
             elapsedTime = System.currentTimeMillis()-startTime;
-            if(elapsedTime >= 1000){
-                averageUPS = 1000 / updateCount;
+            if(elapsedTime > 1000 || updateCount==MAX_UPS){
+                lastFrameTime = elapsedTime;
+                averageUPS = (double) 1000 / updateCount;
                 averageFPS = frameCount / (1E-3 * elapsedTime);
                 updateCount = 0;
                 frameCount = 0;
@@ -111,5 +112,9 @@ public class GameLoop extends Thread{
         catch(InterruptedException e){
             e.printStackTrace();
         }
+    }
+
+    public long getLastFrameTime() {
+        return lastFrameTime;
     }
 }

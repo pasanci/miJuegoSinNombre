@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.view.Display;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -15,12 +17,14 @@ import com.example.mijuegosinnombre.TileMap.Textures;
 
 public class GameStateManager {
     public static final String SAVEGAMESTR = "TestSavedLevel";
+    public static final String SHOWFPSSTR = "ShowFPS";
 
     private ArrayList<GameState> gameStates;
     private int currentState;
     private long frameTime;
     private double scale = 1.0;
     private Context context;
+    public static final boolean DEBUG = true;
 
     public static final int EXIT = -1;
     public static final int MENUSTATE = 0;
@@ -33,15 +37,34 @@ public class GameStateManager {
     private int height = 3200;
     private int actualWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int actualHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+    private int topMargin = 0;
+    private int bottomMargin = 0;
     private double ratio = min(width/actualHeight,height/actualHeight);
 
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor editor;
+    private final SharedPreferences sharedPref;
+    private final SharedPreferences.Editor editor;
     private Levels levels;
     private int currentLevel;
+    private boolean showFPS;
+
+    public static int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
 
     public int getCurrentLevel() {
         return currentLevel;
+    }
+
+    public void loadOptions() {
+        this.showFPS = this.sharedPref.getBoolean(SHOWFPSSTR, false);
+    }
+
+    public SharedPreferences.Editor getEditor() {
+        return this.editor;
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return this.sharedPref;
     }
 
     public void setCurrentLevel(int currentLevel) {
@@ -71,17 +94,18 @@ public class GameStateManager {
 
     public GameStateManager(Context context) {
         this.context = context;
-        sharedPref = this.context.getSharedPreferences(SAVEGAMESTR, Context.MODE_PRIVATE);
-        this.currentLevel = sharedPref.getInt(SAVEGAMESTR, 1);
-        editor = sharedPref.edit();
-        textures = new Textures(context);
+        this.sharedPref = this.context.getSharedPreferences(SAVEGAMESTR, Context.MODE_PRIVATE);
+        this.currentLevel = this.sharedPref.getInt(SAVEGAMESTR, 1);
+        loadOptions();
+        this.editor = this.sharedPref.edit();
+        this.textures = new Textures(context);
         this.levels = new Levels(this, this.textures);
-        gameStates = new ArrayList<GameState>();
-        currentState = MENUSTATE;
-        gameStates.add(new MenuState(this, context));
-        gameStates.add(new OptionsState(this, context));
-        gameStates.add(new RunningState(this, context));
-        gameStates.add(new LevelSelection(this, context));
+        this.gameStates = new ArrayList<GameState>();
+        this.currentState = MENUSTATE;
+        this.gameStates.add(new MenuState(this, context));
+        this.gameStates.add(new OptionsState(this, context));
+        this.gameStates.add(new RunningState(this, context));
+        this.gameStates.add(new LevelSelection(this, context));
     }
 
     public void setState (int state) {
@@ -151,5 +175,29 @@ public class GameStateManager {
 
     public int getActualHeight() {
         return actualHeight;
+    }
+
+    public int getTopMargin() {
+        return topMargin;
+    }
+
+    public void setTopMargin(int topMargin) {
+        this.topMargin = topMargin;
+    }
+
+    public int getBottomMargin() {
+        return bottomMargin;
+    }
+
+    public void setBottomMargin(int bottomMargin) {
+        this.bottomMargin = bottomMargin;
+    }
+
+    public boolean getShowFPS() {
+        return showFPS;
+    }
+
+    public void setShowFPS(boolean newVal) {
+        this.showFPS = newVal;
     }
 }

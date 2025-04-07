@@ -5,6 +5,7 @@ import static java.util.Collections.min;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import androidx.core.content.ContextCompat;
@@ -17,6 +18,7 @@ import com.example.mijuegosinnombre.Main.Levels;
 import com.example.mijuegosinnombre.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RunningState extends GameState{
@@ -30,7 +32,6 @@ public class RunningState extends GameState{
     private long choqueTime = System.nanoTime();
     private boolean choqueState = false;
     private boolean pause = false;
-    private Context context;
 
     public RunningState(GameStateManager gsm, Context context) {
         this.gsm = gsm;
