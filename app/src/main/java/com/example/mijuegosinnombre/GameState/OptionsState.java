@@ -48,7 +48,7 @@ public class OptionsState extends GameState{
             else if(constant == SHOWFPS) {
                 this.option = SHOWFPS;
                 this.name = "FPS";
-                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.skip_vector);
+                this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.fps_vector);
             }
         }
         public Option(int constant,int left,int top,int right,int bottom){

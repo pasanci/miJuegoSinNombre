@@ -1,5 +1,6 @@
 package com.example.mijuegosinnombre.TileMap;
 
+import static java.lang.Double.max;
 import static java.lang.Math.sqrt;
 
 import android.content.Context;
@@ -82,12 +83,13 @@ public class Obstacle {
         this.textures = textures;
         this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
         this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
-        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, 2*this.fWidth, 2*this.fHeight, true);
-        int startWidth = GameStateManager.getRandomNumber(0,this.fWidth);
-        int startHeight = GameStateManager.getRandomNumber(0,this.fHeight);
-        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, startWidth, startHeight, this.fWidth, this.fHeight);
+        int maxRes = (int) max(max(this.fWidth,this.fHeight),this.height);
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, maxRes, maxRes, true);
+        int rotation = GameStateManager.getRandomNumber(0, 3);
+        this.tempBitmap = Textures.RotateBitmap(this.tempBitmap, rotation*90);
+        int startHeight = GameStateManager.getRandomNumber(0, (int) (maxRes-this.height));
+        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, 0, startHeight, this.fWidth, (int) this.height);
         this.tempBitmap = Bitmap.createScaledBitmap(this.tempBitmap, this.fWidth, this.fHeight, true);
-        //this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
         this.initialx = x;
         this.initialy = y;
         this.initialwidth = this.width;
@@ -104,12 +106,13 @@ public class Obstacle {
         this.textures = textures;
         this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
         this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
-        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, 2*this.fWidth, 2*this.fHeight, true);
-        int startWidth = GameStateManager.getRandomNumber(0,this.fWidth);
-        int startHeight = GameStateManager.getRandomNumber(0,this.fHeight);
-        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, startWidth, startHeight, this.fWidth, this.fHeight);
+        int maxRes = (int) max(max(this.fWidth,this.fHeight),this.height);
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, maxRes, maxRes, true);
+        int rotation = GameStateManager.getRandomNumber(0, 3);
+        this.tempBitmap = Textures.RotateBitmap(this.tempBitmap, rotation*90);
+        int startHeight = GameStateManager.getRandomNumber(0, (int) (maxRes-this.height));
+        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, 0, startHeight, this.fWidth, (int) this.height);
         this.tempBitmap = Bitmap.createScaledBitmap(this.tempBitmap, this.fWidth, this.fHeight, true);
-        //this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
         this.initialx = this.x;
         this.initialy = this.y;
         this.initialwidth = this.width;
@@ -132,12 +135,21 @@ public class Obstacle {
         this.textures = textures;
         this.fWidth = (int) (this.width/this.gsm.getWidth()*this.gsm.getActualWidth());
         this.fHeight = (int) (this.height/this.gsm.getHeight()*this.gsm.getActualHeight());
+        /*
         this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, 2*this.fWidth, 2*this.fHeight, true);
         int startWidth = GameStateManager.getRandomNumber(0,this.fWidth);
         int startHeight = GameStateManager.getRandomNumber(0,this.fHeight);
-        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, startWidth, startHeight, this.fWidth, this.fHeight);
+        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, startWidth, startHeight, this.fWidth, (int) this.height);
         this.tempBitmap = Bitmap.createScaledBitmap(this.tempBitmap, this.fWidth, this.fHeight, true);
         //this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, this.fWidth, this.fHeight, true);
+        */
+        int maxRes = (int) max(max(this.fWidth,this.fHeight),this.height);
+        this.tempBitmap = Bitmap.createScaledBitmap(textures.marbleBitmap, maxRes, maxRes, true);
+        int rotation = GameStateManager.getRandomNumber(0, 3);
+        this.tempBitmap = Textures.RotateBitmap(this.tempBitmap, rotation*90);
+        int startHeight = GameStateManager.getRandomNumber(0, (int) (maxRes-this.height));
+        this.tempBitmap = Bitmap.createBitmap(this.tempBitmap, 0, startHeight, this.fWidth, (int) this.height);
+        this.tempBitmap = Bitmap.createScaledBitmap(this.tempBitmap, this.fWidth, this.fHeight, true);
         this.initialx = this.x;
         this.initialy = this.y;
         this.initialwidth = this.width;

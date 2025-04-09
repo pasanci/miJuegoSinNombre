@@ -5,12 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.view.View;
+import android.graphics.Matrix;
 
 import com.example.mijuegosinnombre.R;
-
-
 
 public class Textures extends View {
 
@@ -35,6 +33,13 @@ public class Textures extends View {
         sp = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.mipmap.splash4), 200, 200, true);
         splashesB[3] = colorize(sp,Color.CYAN);
         splashesR[3] = colorize(sp,Color.RED);
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle){
+        Matrix matrix = new Matrix();
+        matrix.postTranslate((float) source.getWidth() /2, (float) source.getHeight() /2);
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     public Bitmap colorize(Bitmap srcBmp, int dstColor) {
