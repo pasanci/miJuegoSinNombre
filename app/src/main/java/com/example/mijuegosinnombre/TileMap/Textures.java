@@ -13,6 +13,7 @@ import com.example.mijuegosinnombre.R;
 public class Textures extends View {
 
     public Drawable marble;
+    public Bitmap menuMarbleBitmap;
     public Bitmap marbleBitmap;
     public Bitmap [] splashesR = new Bitmap[4];
     public Bitmap [] splashesB = new Bitmap[4];
@@ -20,7 +21,8 @@ public class Textures extends View {
     public Textures(Context context) {
         super(context);
         marble = context.getResources().getDrawable(R.mipmap.marble_foreground);
-        marbleBitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.marble_foreground);
+        menuMarbleBitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.marble_foreground);
+        marbleBitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.marble_ai);
         Bitmap sp = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.mipmap.splash1), 200, 200, true);
         splashesB[0] = colorize(sp,Color.CYAN);
         splashesR[0] = colorize(sp,Color.RED);
@@ -37,7 +39,6 @@ public class Textures extends View {
 
     public static Bitmap RotateBitmap(Bitmap source, float angle){
         Matrix matrix = new Matrix();
-        matrix.postTranslate((float) source.getWidth() /2, (float) source.getHeight() /2);
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }

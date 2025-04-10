@@ -12,6 +12,10 @@ import android.view.MotionEvent;
 import androidx.core.content.ContextCompat;
 import com.example.mijuegosinnombre.TileMap.Background;
 import com.example.mijuegosinnombre.R;
+import com.example.mijuegosinnombre.TileMap.Textures;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class LevelSelection extends GameState {
@@ -33,12 +37,12 @@ public class LevelSelection extends GameState {
     private Paint paintSplash;
     private Paint paintB;
     private Paint paintR;
-    private Bitmap tempBitmap;
     private Pair<Integer,Integer> clickPos;
     private Bitmap splash;
     private Random random;
     private long  transitionTime;
     private int startY = 0;
+    List<Bitmap> textures = new ArrayList<Bitmap>();
 
     LevelSelection(GameStateManager gsm, Context context){
         this.gsm = gsm;
@@ -63,6 +67,21 @@ public class LevelSelection extends GameState {
         if((numberLevels%3)!=0){
             num++;
         }
+        for(int i=0;i<numberLevels;i++){
+            Bitmap tempBitmap = gsm.textures.marbleBitmap;
+            if(tempBitmap.getWidth()<tempBitmap.getHeight()) {
+                int startHeight = GameStateManager.getRandomNumber(0, (int) (tempBitmap.getHeight()-tempBitmap.getWidth()));
+                tempBitmap = Bitmap.createBitmap(tempBitmap, 0, startHeight, tempBitmap.getWidth(), tempBitmap.getWidth());
+            }
+            else{
+                int startWidth = GameStateManager.getRandomNumber(0, (int) (tempBitmap.getWidth()-tempBitmap.getHeight()));
+                tempBitmap = Bitmap.createBitmap(tempBitmap, startWidth, 0, tempBitmap.getHeight(), tempBitmap.getHeight());
+            }
+            int rotation = GameStateManager.getRandomNumber(0, 3);
+            tempBitmap = Textures.RotateBitmap(tempBitmap, rotation*90);
+            tempBitmap = Bitmap.createScaledBitmap(tempBitmap, section-(section/4), section-(section/4), true);
+            textures.add(tempBitmap);
+        }
         this.maxDesp = section*num;
         this.maxDesp = this.maxDesp-this.gsm.getActualHeight();
         this.section = (this.width/3);
@@ -82,7 +101,7 @@ public class LevelSelection extends GameState {
         this.desplazamiento = 0;
         this.validDesplazamiento = false;
         this.maxLevel = sharedPref.getInt(SAVEGAMESTR, 1);
-        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
+        //this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
         clickPos = null;
     }
 
@@ -105,13 +124,11 @@ public class LevelSelection extends GameState {
                 this.paint.setAlpha(80);
             }
             int pos = i%3;
-            canvas.drawBitmap(tempBitmap,(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
+            canvas.drawBitmap(textures.get(i),(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
             if(clickPos!=null && gsm.getCurrentLevel()-1 == i) {
-                Bitmap b = tempBitmap.copy(tempBitmap.getConfig(),true);
-                Canvas splashCanvas = new Canvas(b);
+                Canvas splashCanvas = new Canvas(textures.get(i));
                 splashCanvas.drawBitmap(splash, (clickPos.first-pos*section-(section/8)) - splash.getWidth()/2, (clickPos.second-currentY-this.desplazamiento-(section/8))-splash.getHeight()/2, paintSplash);
-                //splashCanvas.drawBitmap(splash, 0, 0, paintSplash);
-                canvas.drawBitmap(b,(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
+                canvas.drawBitmap(textures.get(i),(pos*section)+(section/8),currentY+(section/8)-this.desplazamiento,paint);
             }
             //canvas.drawRect((float) (pos*section)+(section/8), (float) currentY+(section/8)-this.desplazamiento, (float) ((pos+1)*section)-(section/8), (float) currentY+section-(section/8)-this.desplazamiento, paint);
             textPaint.setTextAlign(Paint.Align.CENTER);

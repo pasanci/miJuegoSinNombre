@@ -16,6 +16,7 @@ import java.util.Random;
 
 import com.example.mijuegosinnombre.TileMap.Background;
 import com.example.mijuegosinnombre.R;
+import com.example.mijuegosinnombre.TileMap.Textures;
 
 public class OptionsState extends GameState{
 
@@ -29,6 +30,7 @@ public class OptionsState extends GameState{
         public int option;
         public int left, top, right, bottom;
         public Rect bounds;
+        private Bitmap tempBitmap;
         public Option(int constant){
             if(constant == DELETE) {
                 this.option = DELETE;
@@ -50,18 +52,21 @@ public class OptionsState extends GameState{
                 this.name = "FPS";
                 this.texture = (VectorDrawable) context.getResources().getDrawable(R.drawable.fps_vector);
             }
-        }
-        public Option(int constant,int left,int top,int right,int bottom){
-            this(constant);
-            this.left = left;
-            this.top = top;
-            this.right = right;
-            this.bottom = bottom;
+            if(gsm.textures.marbleBitmap.getWidth()<gsm.textures.marbleBitmap.getHeight()) {
+                int startHeight = GameStateManager.getRandomNumber(0, (int) (gsm.textures.marbleBitmap.getHeight()-gsm.textures.marbleBitmap.getWidth()));
+                this.tempBitmap = Bitmap.createBitmap(gsm.textures.marbleBitmap, 0, startHeight, gsm.textures.marbleBitmap.getWidth(), gsm.textures.marbleBitmap.getWidth());
+            }
+            else{
+                int startWidth = GameStateManager.getRandomNumber(0, (int) (gsm.textures.marbleBitmap.getWidth()-gsm.textures.marbleBitmap.getHeight()));
+                this.tempBitmap = Bitmap.createBitmap(gsm.textures.marbleBitmap, startWidth, 0, gsm.textures.marbleBitmap.getHeight(), gsm.textures.marbleBitmap.getHeight());
+            }
+            int rotation = GameStateManager.getRandomNumber(0, 3);
+            this.tempBitmap = Textures.RotateBitmap(this.tempBitmap, rotation*90);
+            this.tempBitmap = Bitmap.createScaledBitmap(this.tempBitmap, section-(section/4), section-(section/4), true);
         }
     }
 
     private Background bg;
-    private Bitmap tempBitmap;
     private int section;
 
     private int currentChoice = 0;
@@ -89,6 +94,7 @@ public class OptionsState extends GameState{
         this.gsm = gsm;
         this.context = context;
         this.validClick = false;
+        this.section = (this.gsm.getActualWidth()/2);
         this.options = new Option[]{
                 new Option(Option.DELETE),
                 new Option(Option.UNLOCK),
@@ -107,7 +113,6 @@ public class OptionsState extends GameState{
         catch(Exception e) {
             e.printStackTrace();
         }
-        this.section = (this.gsm.getActualWidth()/2);
 
         textPaint.setTextSize(50);
         int currentY = (int) (startY+((textPaint.descent() + textPaint.ascent()) / 2));
@@ -130,7 +135,7 @@ public class OptionsState extends GameState{
     }
     public void init() {
         clickPos = null;
-        this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
+        //this.tempBitmap = Bitmap.createScaledBitmap(gsm.textures.marbleBitmap, section-(section/4), section-(section/4), true);
     }
 
     public void update() {
@@ -147,13 +152,11 @@ public class OptionsState extends GameState{
             this.textPaint.setAlpha(80);
         }
         for(int i=0; i<options.length; i++) {
-            canvas.drawBitmap(tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
+            canvas.drawBitmap(options[i].tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
             if(clickPos!=null) {
-                Bitmap b = tempBitmap.copy(tempBitmap.getConfig(),true);
-                Canvas splashCanvas = new Canvas(b);
+                Canvas splashCanvas = new Canvas(options[i].tempBitmap);
                 splashCanvas.drawBitmap(splash, (clickPos.first-(section/2)-(section/8)) - splash.getWidth()/2, (clickPos.second-currentY-(section/8))-splash.getHeight()/2, paintSplash);
-                //splashCanvas.drawBitmap(splash, 0, 0, paintSplash);
-                canvas.drawBitmap(b,(section/2)+(section/8),currentY+(section/8),textPaint);
+                canvas.drawBitmap(options[i].tempBitmap,(section/2)+(section/8),currentY+(section/8),textPaint);
             }
             options[i].texture.draw(canvas);
             canvas.drawText(options[i].name, (canvas.getWidth() / 2), currentY+section-((textPaint.descent() + textPaint.ascent()) / 2)-(section/4), optionPaint);
