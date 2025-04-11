@@ -3,6 +3,8 @@ package com.example.mijuegosinnombre.Main;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,9 +22,18 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
     //public double SCALE;
     private GameStateManager gsm;
 
-    public Main(Context context, int topMargin, int bottomMargin) {
+    public Main(Context context, Display display) {
         super(context);
         gsm = new GameStateManager(context);
+        int topMargin = 0;
+        int bottomMargin = 0;
+        gsm.setDisplay(display);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if(display.getCutout()!=null) {
+                topMargin = display.getCutout().getSafeInsetTop();
+                bottomMargin = display.getCutout().getSafeInsetBottom();
+            }
+        }
         gsm.setTopMargin(topMargin);
         gsm.setBottomMargin(bottomMargin);
         gsm.setState(GameStateManager.MENUSTATE);
@@ -30,7 +41,7 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
         surfaceHolder.addCallback(this);
 
         this.context = context;
-        this.gameLoop = new GameLoop(this, surfaceHolder, context);
+        this.gameLoop = new GameLoop(this, surfaceHolder, context, this.gsm);
         setFocusable(true);
     }
 
@@ -45,7 +56,7 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
         if (gameLoop.getState().equals(Thread.State.TERMINATED)) {
             surfaceHolder = getHolder();
             surfaceHolder.addCallback(this);
-            gameLoop = new GameLoop(this, surfaceHolder, this.context);
+            gameLoop = new GameLoop(this, surfaceHolder, this.context, this.gsm);
         }
         gameLoop.startLoop();
     }
@@ -70,7 +81,7 @@ public class Main extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        gsm.setFrameTime((long)gameLoop.getAverageUPS());
+        gsm.setFrameTime((long)gameLoop.getLastFrameTime());
         //gsm.setFrameTime((long)gameLoop.getLastFrameTime());
         gsm.update();
     }

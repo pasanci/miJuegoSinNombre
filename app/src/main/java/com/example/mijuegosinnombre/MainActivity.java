@@ -1,6 +1,7 @@
 package com.example.mijuegosinnombre;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -19,19 +20,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
-        int topMargin = 0;
-        int bottomMargin = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Display display = getWindowManager().getDefaultDisplay();
-            if(display.getCutout()!=null) {
-                topMargin = display.getCutout().getSafeInsetTop();
-                bottomMargin = display.getCutout().getSafeInsetBottom();
-            }
-        }
+        Display display = getWindowManager().getDefaultDisplay();
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        this.main = new Main(this, topMargin, bottomMargin);
+        window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        this.main = new Main(this, display);
         setContentView(main);
     }
 

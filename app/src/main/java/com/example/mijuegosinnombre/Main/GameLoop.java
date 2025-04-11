@@ -1,13 +1,11 @@
 package com.example.mijuegosinnombre.Main;
 
-import com.example.mijuegosinnombre.GameState.GameStateManager;
-import com.example.mijuegosinnombre.Main.Main;
-
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.view.SurfaceHolder;
 
-import com.example.mijuegosinnombre.Main.Main;
+import com.example.mijuegosinnombre.GameState.GameStateManager;
 
 public class GameLoop extends Thread{
     private Main game;
@@ -16,13 +14,15 @@ public class GameLoop extends Thread{
     private SurfaceHolder surfaceHolder;
     private double averageUPS;
     private double averageFPS;
-    private static final double MAX_UPS = 60;
-    private static final double UPS_PERIOD = 1E+3/MAX_UPS;
+    private static final double MAX_UPS = 120;
     private long lastFrameTime;
+    private GameStateManager gsm;
+    private float refreshPeriod;
 
-    public GameLoop(Main game, SurfaceHolder surfaceHolder, Context context) {
+    public GameLoop(Main game, SurfaceHolder surfaceHolder, Context context, GameStateManager gsm) {
         this.game = game;
         this.surfaceHolder = surfaceHolder;
+        this.gsm = gsm;
     }
 
     public double getAverageUPS() {
@@ -52,8 +52,21 @@ public class GameLoop extends Thread{
         Canvas canvas = null;
         startTime = System.currentTimeMillis();
         while(running){
+            float refreshRate = -1;
+            if(this.gsm.getDisplay()==null){
+                refreshRate = (float) MAX_UPS;
+            }
+            else{
+                refreshRate = this.gsm.getDisplay().getRefreshRate();
+            }
+            refreshPeriod = (float) (1E+3/refreshRate);
             try{
-                canvas = surfaceHolder.lockCanvas();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    canvas = surfaceHolder.lockHardwareCanvas();
+                }
+                else{
+                    canvas = surfaceHolder.lockCanvas();
+                }
                 synchronized(surfaceHolder) {
                     game.update();
                     updateCount++;
@@ -76,7 +89,7 @@ public class GameLoop extends Thread{
             }
 
             elapsedTime = System.currentTimeMillis()-startTime;
-            sleepTime = (long) (updateCount*UPS_PERIOD - elapsedTime);
+            sleepTime = (long) (updateCount*refreshPeriod - elapsedTime);
             if(sleepTime > 0){
                 try {
                     sleep(sleepTime);
@@ -85,16 +98,9 @@ public class GameLoop extends Thread{
                 }
             }
 
-            while(sleepTime < 0 && updateCount < MAX_UPS-1){
-                game.update();
-                updateCount++;
-                elapsedTime = System.currentTimeMillis()-startTime;
-                sleepTime = (long) (updateCount*UPS_PERIOD - elapsedTime);
-            }
-
             elapsedTime = System.currentTimeMillis()-startTime;
-            if(elapsedTime > 1000 || updateCount==MAX_UPS){
-                lastFrameTime = elapsedTime;
+            if(elapsedTime > 1000){
+                lastFrameTime = (long) refreshPeriod;
                 averageUPS = (double) 1000 / updateCount;
                 averageFPS = frameCount / (1E-3 * elapsedTime);
                 updateCount = 0;

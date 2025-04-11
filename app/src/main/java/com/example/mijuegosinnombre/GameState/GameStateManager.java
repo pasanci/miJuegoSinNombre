@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.Display;
 import android.view.MotionEvent;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -46,6 +45,7 @@ public class GameStateManager {
     private Levels levels;
     private int currentLevel;
     private boolean showFPS;
+    private Display display;
 
     public static int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
@@ -199,5 +199,13 @@ public class GameStateManager {
 
     public void setShowFPS(boolean newVal) {
         this.showFPS = newVal;
+    }
+
+    public Display getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(Display display) {
+        this.display = display;
     }
 }
