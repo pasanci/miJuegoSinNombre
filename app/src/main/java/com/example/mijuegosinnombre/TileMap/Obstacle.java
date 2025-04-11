@@ -23,6 +23,7 @@ import com.example.mijuegosinnombre.Main.Collision;
 import com.example.mijuegosinnombre.R;
 
 public class Obstacle {
+
     public double getX() {
         return x;
     }
@@ -73,6 +74,9 @@ public class Obstacle {
     Paint paintR = new Paint();
     Paint paintP = new Paint();
     Paint paint = new Paint();
+
+    public Obstacle() {
+    }
 
     public Obstacle(GameStateManager gsm, Textures textures, double x, double y, double width, double length) {
         this.gsm = gsm;

@@ -6,16 +6,18 @@ import com.example.mijuegosinnombre.TileMap.Obstacle;
 import com.example.mijuegosinnombre.TileMap.RotatingObstacle;
 import com.example.mijuegosinnombre.TileMap.FadingRotatingObstacle;
 import com.example.mijuegosinnombre.TileMap.Textures;
+import com.example.mijuegosinnombre.TileMap.TutorialObstacle;
 
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.HALF;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.HOLE;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.SMALLHOLE;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.CENTER;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.STEADY;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.ROTATING;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.SOLID;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.FADING;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.LEFT;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.HALF;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.HOLE;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.SMALLHOLE;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.CENTER;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.STEADY;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.ROTATING;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.SOLID;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.FADING;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.LEFT;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.TUTORIAL;
 
 import java.util.List;
 
@@ -36,6 +38,12 @@ public class ObstacleCreator {
 
     public void reset(){
         this.obstacles.clear();
+    }
+
+    public void addObstacle(int instance){
+        if(instance==TUTORIAL){
+            obstacles.add(new TutorialObstacle(this.gsm, this.textures));
+        }
     }
 
     public void addObstacle(int type, int rotating, int fading, int side){

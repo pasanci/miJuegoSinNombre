@@ -1,16 +1,17 @@
 package com.example.mijuegosinnombre.Main;
 
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.HALF;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.HOLE;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.NONE;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.SMALLHOLE;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.CENTER;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.STEADY;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.ROTATING;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.SOLID;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.FADING;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.LEFT;
-import static com.example.mijuegosinnombre.Main.SimpleObstacle.RIGHT;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.HALF;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.HOLE;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.NONE;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.SMALLHOLE;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.CENTER;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.STEADY;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.ROTATING;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.SOLID;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.FADING;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.LEFT;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.RIGHT;
+import static com.example.mijuegosinnombre.TileMap.SimpleObstacle.TUTORIAL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +19,9 @@ import java.util.List;
 
 import com.example.mijuegosinnombre.GameState.GameStateManager;
 import com.example.mijuegosinnombre.TileMap.Obstacle;
-import com.example.mijuegosinnombre.TileMap.RotatingObstacle;
+import com.example.mijuegosinnombre.TileMap.SimpleObstacle;
 import com.example.mijuegosinnombre.TileMap.Textures;
+import com.example.mijuegosinnombre.TileMap.TutorialObstacle;
 
 public class Levels {
 
@@ -38,8 +40,12 @@ public class Levels {
         this.gsm = gsm;
         this.textures = textures;
         this.levelsList = new ArrayList<List<SimpleObstacle>>();
-        //Principiante
+        //Tutorial
         List<SimpleObstacle> level = new ArrayList<SimpleObstacle>();
+        level.add(new SimpleObstacle(TUTORIAL));
+        this.levelsList.add(level);
+        //Principiante
+        level = new ArrayList<SimpleObstacle>();
         level.add(new SimpleObstacle(HALF, STEADY, SOLID, LEFT));
         this.levelsList.add(level);
         level = new ArrayList<SimpleObstacle>();
@@ -333,11 +339,16 @@ public class Levels {
         ObstacleCreator obsCreator = new ObstacleCreator(this.gsm, this.textures, obstacles);
         List<SimpleObstacle> level = this.levelsList.get(number-1);
         for(SimpleObstacle obs:level){
-            if(obs.getFadingSide()==NONE) {
-                obsCreator.addObstacle(obs.getType(), obs.getRotating(), obs.getFading(), obs.getSide());
+            if(obs.getInstance()==TUTORIAL){
+                obsCreator.addObstacle(TUTORIAL);
             }
-            else {
-                obsCreator.addObstacle(obs.getType(), obs.getRotating(), obs.getFading(), obs.getSide(), obs.getFadingSide());
+            else{
+                if(obs.getFadingSide()==NONE) {
+                    obsCreator.addObstacle(obs.getType(), obs.getRotating(), obs.getFading(), obs.getSide());
+                }
+                else {
+                    obsCreator.addObstacle(obs.getType(), obs.getRotating(), obs.getFading(), obs.getSide(), obs.getFadingSide());
+                }
             }
         }
         levels.put(number,obstacles);

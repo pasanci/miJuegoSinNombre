@@ -1,7 +1,9 @@
-package com.example.mijuegosinnombre.Main;
+package com.example.mijuegosinnombre.TileMap;
 
 public class SimpleObstacle {
     public static final int NONE = 0;
+
+    public static final int TUTORIAL = -1;
 
     public static final int HALF = 0;
     public static final int HOLE = 1;
@@ -37,11 +39,20 @@ public class SimpleObstacle {
         return fadingSide;
     }
 
+    public int getInstance() {
+        return instance;
+    }
+
     private int type;
     private int rotating;
     private int fading;
     private int side;
     private int fadingSide;
+    private int instance;
+
+    public SimpleObstacle(int instance){
+        this.instance = instance;
+    }
 
     public SimpleObstacle(int type, int rotating, int fading, int side){
         this.type = type;
