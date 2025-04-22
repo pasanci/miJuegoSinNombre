@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 
 import com.example.mijuegosinnombre.Main.Levels;
+import com.example.mijuegosinnombre.TileMap.Player;
 import com.example.mijuegosinnombre.TileMap.Textures;
 
 public class GameStateManager {
@@ -46,6 +47,7 @@ public class GameStateManager {
     private int currentLevel;
     private boolean showFPS;
     private Display display;
+    private Player player;
 
     public static int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
@@ -207,5 +209,13 @@ public class GameStateManager {
 
     public void setDisplay(Display display) {
         this.display = display;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

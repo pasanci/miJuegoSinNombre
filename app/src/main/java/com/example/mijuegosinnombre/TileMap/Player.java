@@ -1,7 +1,6 @@
 package com.example.mijuegosinnombre.TileMap;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.fonts.Font;
@@ -9,10 +8,13 @@ import android.graphics.fonts.Font;
 import androidx.core.content.ContextCompat;
 
 import com.example.mijuegosinnombre.GameState.GameStateManager;
-import com.example.mijuegosinnombre.Main.Main;
 import com.example.mijuegosinnombre.R;
 
 public class Player{
+
+    public static final int LEFT = 0;
+    public static final int RIGHT = 1;
+    public static final int BOTH = 2;
 
     private int color1;
     private int color2;
@@ -36,6 +38,7 @@ public class Player{
     private double [] historico;
     private int historicoIterator;
     private long lastTime;
+    private int allowedMovement = BOTH;
     //private BufferedImage fire;
     //private BufferedImage ice;
     Textures textures;
@@ -139,13 +142,14 @@ public class Player{
             }
         }
         if(!centering && !waitingRestart) {
-            if(angleLeft) {
+            if(angleLeft && (allowedMovement==BOTH || allowedMovement==LEFT)) {
                 this.angle-=this.rotationSpeed;
             }
-            else if(angleRight) {
+            else if(angleRight && (allowedMovement==BOTH || allowedMovement==RIGHT)) {
                 this.angle+=this.rotationSpeed;
             }
         }
+        this.angle = normalizeAngle(this.angle);
     }
 
     public static double normalizeAngle(double angle) {
@@ -161,7 +165,6 @@ public class Player{
         if(centering) {
             rotateToTarget();
         }
-        this.angle = normalizeAngle(this.angle);
         //canvas.drawColor(ContextCompat.getColor(context, R.color.white));
         paint.setColor(ContextCompat.getColor(context, R.color.white));
         paint.setStrokeWidth(3);
@@ -279,5 +282,9 @@ public class Player{
 
     public double getAngle(){
         return this.angle;
+    }
+
+    public void setAllowedMovement(int allowedMovement) {
+        this.allowedMovement = allowedMovement;
     }
 }

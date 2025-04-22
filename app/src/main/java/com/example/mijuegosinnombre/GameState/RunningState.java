@@ -40,6 +40,7 @@ public class RunningState extends GameState{
         try {
             bg = new Background(this.gsm, ContextCompat.getColor(context, R.color.black));
             player = new Player(this.gsm, this.textures, ContextCompat.getColor(context, R.color.cyan), ContextCompat.getColor(context, R.color.red), Math.PI, 300, 50);
+            this.gsm.setPlayer(player);
             init();
         }
         catch(Exception e) {
@@ -54,6 +55,7 @@ public class RunningState extends GameState{
 
     public void loadLevel() {
         this.pause = false;
+        this.gsm.getPlayer().setAllowedMovement(Player.BOTH);
         obstacles = this.gsm.getLevels().loadLevel(gsm.getCurrentLevel());
     }
 
@@ -173,11 +175,11 @@ public class RunningState extends GameState{
 
     public void draw(Canvas canvas) {
         bg.draw(canvas);
-        player.setFrameTime(this.frameTime);
-        player.draw(canvas, this.context);
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(canvas);
         }
+        player.setFrameTime(this.frameTime);
+        player.draw(canvas, this.context);
     }
 
     public void drawDebug(Canvas canvas) {
