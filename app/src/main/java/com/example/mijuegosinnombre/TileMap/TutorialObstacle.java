@@ -32,6 +32,7 @@ public class TutorialObstacle extends Obstacle{
     Textures textures;
     Bitmap tempBitmap;
     VectorDrawable touchDrawable;
+    VectorDrawable touchDrawableUp;
     VectorDrawable rotateLeftDrawable;
     VectorDrawable rotateRightDrawable;
 
@@ -57,36 +58,33 @@ public class TutorialObstacle extends Obstacle{
     }
 
     public void update() {
-        double angle1 = this.previousAngle;
-        double angle2 = this.gsm.getPlayer().getAngle();
-        double difference;
-        if (angle1 > angle2)
-        {
-            if ((angle1 - angle2) > Math.PI)
-            {
-                difference = (2*Math.PI - angle1) + angle2;
+        if(!this.gsm.getPlayer().isRotatingToTarget()) {
+            double angle1 = this.previousAngle;
+            double angle2 = this.gsm.getPlayer().getAngle();
+            double difference;
+            if (angle1 > angle2) {
+                if ((angle1 - angle2) > Math.PI) {
+                    difference = (2 * Math.PI - angle1) + angle2;
+                } else {
+                    difference = angle1 - angle2;
+                }
+            } else {
+                if ((angle2 - angle1) > Math.PI) {
+                    difference = (2 * Math.PI - angle2) + angle1;
+                } else {
+                    difference = angle2 - angle1;
+                }
             }
-            else
-            {
-                difference = angle1 - angle2;
+            this.totalAngle += difference;
+            this.previousAngle = this.gsm.getPlayer().getAngle();
+            if (totalAngle > 2 * Math.PI) {
+                advanceStep();
+                this.totalAngle = 0;
             }
         }
-        else
-        {
-            if ((angle2 - angle1) > Math.PI)
-            {
-                difference = (2*Math.PI - angle2) + angle1;
-            }
-            else
-            {
-                difference = angle2 - angle1;
-            }
-        }
-        this.totalAngle += difference;
-        this.previousAngle = this.gsm.getPlayer().getAngle();
-        if(totalAngle>2*Math.PI){
-            advanceStep();
+        else{
             this.totalAngle = 0;
+            this.previousAngle = this.gsm.getPlayer().getAngle();
         }
         //System.out.println(this.totalAngle);
     }
@@ -103,20 +101,30 @@ public class TutorialObstacle extends Obstacle{
     }
 
     public void draw(Canvas canvas) {
-        if(step==RIGHT) {
-            touchDrawable.setBounds(this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth(), this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
-            touchDrawable.draw(canvas);
-            rotateRightDrawable.setBounds((int) (this.playerX - this.playerD), (int) (this.playerY - this.playerD), (int) (this.playerX + this.playerD), (int) (this.playerY + this.playerD));
-            rotateRightDrawable.draw(canvas);
+        if(((int)(System.currentTimeMillis()*0.001))%2==0){
+            if(step==RIGHT) {
+                touchDrawableUp.setBounds(this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth(), this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
+                touchDrawableUp.draw(canvas);
+            }
+            else if (step==LEFT) {
+                touchDrawableUp.setBounds(0, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
+                touchDrawableUp.draw(canvas);
+            }
         }
-        else if (step==LEFT){
-            touchDrawable.setBounds(0, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
-            touchDrawable.draw(canvas);
-            rotateLeftDrawable.setBounds((int) (this.playerX - this.playerD), (int) (this.playerY - this.playerD), (int) (this.playerX + this.playerD), (int) (this.playerY + this.playerD));
-            rotateLeftDrawable.draw(canvas);
-        }
-        else{
+        else {
+            if (step == RIGHT) {
+                touchDrawable.setBounds(this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth(), this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
+                touchDrawable.draw(canvas);
+                rotateRightDrawable.setBounds((int) (this.playerX - this.playerD), (int) (this.playerY - this.playerD), (int) (this.playerX + this.playerD), (int) (this.playerY + this.playerD));
+                rotateRightDrawable.draw(canvas);
+            } else if (step == LEFT) {
+                touchDrawable.setBounds(0, this.gsm.getActualWidth() / 3, this.gsm.getActualWidth() / 2, this.gsm.getActualWidth() / 3 + this.gsm.getActualWidth() / 2);
+                touchDrawable.draw(canvas);
+                rotateLeftDrawable.setBounds((int) (this.playerX - this.playerD), (int) (this.playerY - this.playerD), (int) (this.playerX + this.playerD), (int) (this.playerY + this.playerD));
+                rotateLeftDrawable.draw(canvas);
+            } else {
 
+            }
         }
         Path path = new Path ();
         path.moveTo((float) this.gsm.getActualWidth() /2, 0);
@@ -131,9 +139,11 @@ public class TutorialObstacle extends Obstacle{
     public void setContext(Context context) {
         this.context = context;
         this.touchDrawable = (VectorDrawable) context.getResources().getDrawable(R.drawable.touch_vector);
+        this.touchDrawableUp = (VectorDrawable) context.getResources().getDrawable(R.drawable.touch_vector_up);
         this.rotateLeftDrawable = (VectorDrawable) context.getResources().getDrawable(R.drawable.rotate_left_vector);
         this.rotateRightDrawable = (VectorDrawable) context.getResources().getDrawable(R.drawable.rotate_right_vector);
         touchDrawable.setColorFilter(Color.BLACK, PorterDuff.Mode.LIGHTEN);
+        touchDrawableUp.setColorFilter(Color.BLACK, PorterDuff.Mode.LIGHTEN);
         rotateLeftDrawable.setColorFilter(Color.BLACK, PorterDuff.Mode.DST_IN);
         rotateRightDrawable.setColorFilter(Color.BLACK, PorterDuff.Mode.DST_IN);
         paint.setColor(ContextCompat.getColor(context, R.color.white));
@@ -141,6 +151,7 @@ public class TutorialObstacle extends Obstacle{
         paint.setStrokeWidth(4);
         this.paint.setAlpha((150));
         touchDrawable.setAlpha(150);
+        touchDrawableUp.setAlpha(150);
         rotateLeftDrawable.setAlpha(150);
         rotateRightDrawable.setAlpha(150);
         DashPathEffect effects = new DashPathEffect (new float [] { 40, 20}, 0);
